@@ -9,6 +9,16 @@
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
 </head>
 <body class="dashboard-page">
+
+<nav class="quick-sidebar" aria-label="Dashboard navigation">
+    <div class="quick-sidebar-title">POKER LEDGER</div>
+    <a href="#dashboard-top">⌂ <span>Dashboard</span></a>
+    <a href="#add-session">＋ <span>Add Session</span></a>
+    <a href="#loss-limit">⚠ <span>Loss Alarm</span></a>
+    <a href="#leaderboard">♛ <span>Leaderboard</span></a>
+    <a href="#session-history">▤ <span>Individual Sessions</span></a>
+</nav>
+
 {% if current_user.is_authenticated and current_user.is_admin %}
 <div class="admin-nav">
     <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-button">
@@ -30,7 +40,7 @@
     </div>
 </header>
 
-<main class="dashboard-container">
+<main class="dashboard-container" id="dashboard-top">
 
     <section class="hero">
         <div>
@@ -171,6 +181,7 @@
                     <select id="game-type" name="game_type" required>
                         <option value="Home Game">♠ Home Game</option>
                         <option value="Stake">♥ Stake</option>
+                        <option value="Ten Card Flip">♦ Ten Card Flip</option>
                     </select>
                 </div>
             </div>
@@ -293,7 +304,7 @@
 
 
     <!-- All-Time Leaderboard -->
-    <section class="panel leaderboard-panel">
+    <section class="panel leaderboard-panel" id="leaderboard">
         <div class="panel-heading">
             <div>
                 <h3>♠ Leaderboard</h3>
@@ -320,6 +331,16 @@
                     {% if leaderboard_period == 'week' %}selected{% endif %}>
                     This Week
                 </option>
+            </select>
+
+            <label for="leaderboard-game">Game Type</label>
+            <select id="leaderboard-game"
+                    name="leaderboard_game"
+                    onchange="this.form.submit()">
+                <option value="all" {% if leaderboard_game == 'all' %}selected{% endif %}>All Games</option>
+                <option value="Stake" {% if leaderboard_game == 'Stake' %}selected{% endif %}>Stake</option>
+                <option value="Home Game" {% if leaderboard_game == 'Home Game' %}selected{% endif %}>Home Game</option>
+                <option value="Ten Card Flip" {% if leaderboard_game == 'Ten Card Flip' %}selected{% endif %}>Ten Card Flip</option>
             </select>
         </form>
 
@@ -366,7 +387,7 @@
         </div>
     </section>
 
-    <section class="panel history-panel">
+    <section class="panel history-panel" id="session-history">
         <div class="panel-heading">
             <div>
                 <h3>Session History</h3>

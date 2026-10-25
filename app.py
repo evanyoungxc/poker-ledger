@@ -100,6 +100,10 @@ def dashboard():
 
     from datetime import date
 
+    leaderboard_game = request.args.get("leaderboard_game", "all")
+    if leaderboard_game not in ("all", "Stake", "Home Game", "Ten Card Flip"):
+        leaderboard_game = "all"
+
     leaderboard_period = request.args.get("leaderboard_period", "all")
 
     if leaderboard_period not in ("all", "month", "week"):
@@ -126,6 +130,12 @@ def dashboard():
     )
 
     join_condition = PokerSession.user_id == User.id
+
+    if leaderboard_game != "all":
+        join_condition = (
+            join_condition
+            & (PokerSession.game_type == leaderboard_game)
+        )
 
     if start_date is not None:
         join_condition = (
@@ -154,6 +164,7 @@ def dashboard():
         sessions=sessions,
         leaderboard=leaderboard,
         leaderboard_period=leaderboard_period,
+        leaderboard_game=leaderboard_game,
         total_profit=total_profit,
         loss_limit=loss_limit,
         loss_alert=loss_alert,
@@ -257,7 +268,7 @@ def add_session():
     session_date = request.form.get("date", "")
     entry_mode = request.form.get("entry_mode", "buyin")
 
-    if game_type not in ("Stake", "Home Game"):
+    if game_type not in ("Stake", "Home Game", "Ten Card Flip"):
         abort(400)
 
     try:
@@ -340,7 +351,7 @@ def edit_session(session_id):
     session_date = request.form.get("date", "")
     entry_mode = request.form.get("entry_mode", "net")
 
-    if game_type not in ("Stake", "Home Game"):
+    if game_type not in ("Stake", "Home Game", "Ten Card Flip"):
         abort(400)
 
     try:
@@ -580,7 +591,7 @@ def admin_edit_session(session_id):
         abort(400)
 
     game_type = request.form.get("game_type", "")
-    if game_type not in ("Stake", "Home Game"):
+    if game_type not in ("Stake", "Home Game", "Ten Card Flip"):
         abort(400)
 
     notes = request.form.get("notes", "").strip()

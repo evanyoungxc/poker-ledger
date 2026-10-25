@@ -40,6 +40,22 @@
     </div>
 </header>
 
+
+<aside class="biggest-fish-panel" aria-label="Current biggest fish">
+    <div class="biggest-fish-title">🐟 CURRENT BIGGEST FISH</div>
+
+    {% if biggest_fish %}
+        <div class="biggest-fish-name">{{ biggest_fish.name }}</div>
+        <div class="biggest-fish-loss">
+            -${{ '%.2f' | format((biggest_fish.net_cents | abs) / 100) }}
+        </div>
+        <div class="biggest-fish-caption">All-time net loss</div>
+    {% else %}
+        <div class="biggest-fish-name">No fish yet</div>
+        <div class="biggest-fish-caption">No players currently have a net loss.</div>
+    {% endif %}
+</aside>
+
 <main class="dashboard-container" id="dashboard-top">
 
     <section class="hero">

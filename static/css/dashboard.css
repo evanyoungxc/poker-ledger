@@ -794,3 +794,65 @@ html {
 #leaderboard {
     scroll-margin-top: 90px;
 }
+
+/* Current Biggest Fish */
+
+.biggest-fish-panel {
+    position: fixed;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 190px;
+    padding: 20px 12px;
+    background: #14251b;
+    border: 1px solid #38513e;
+    border-radius: 14px;
+    text-align: center;
+    z-index: 900;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.biggest-fish-title {
+    color: #d8b76c;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    margin-bottom: 16px;
+}
+
+.biggest-fish-name {
+    color: #f0d38e;
+    font-size: 17px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.biggest-fish-loss {
+    color: #e8e9df;
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.biggest-fish-caption {
+    color: #aab7ac;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+@media (min-width: 1200px) {
+    .dashboard-container {
+        margin-left: 220px;
+        margin-right: 220px;
+        max-width: none;
+    }
+}
+
+@media (max-width: 1199px) {
+    .biggest-fish-panel {
+        position: static;
+        transform: none;
+        width: min(400px, calc(100% - 24px));
+        margin: 12px auto;
+    }
+}

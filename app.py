@@ -159,10 +159,62 @@ def dashboard():
         )
     ).all()
 
+    # Biggest Fish: largest all-time net loss across all users.
+    fish_result = db.session.execute(
+        select(
+            User.username,
+            func.coalesce(
+                func.sum(
+                    PokerSession.cash_out_cents -
+                    PokerSession.buy_in_cents
+                ), 0
+            ).label("net_cents")
+        )
+        .join(PokerSession, PokerSession.user_id == User.id)
+        .group_by(User.id, User.username)
+        .having(
+            func.sum(
+                PokerSession.cash_out_cents -
+                PokerSession.buy_in_cents
+            ) < 0
+        )
+        .order_by(
+            func.sum(
+                PokerSession.cash_out_cents -
+                PokerSession.buy_in_cents
+            ).asc(),
+            User.username.asc()
+        )
+        .limit(1)
+    ).first()
+
+    fish_names = {
+        "a": "Angelfish", "b": "Bass", "c": "Catfish",
+        "d": "Discus", "e": "Eel", "f": "Flounder",
+        "g": "Grouper", "h": "Haddock", "i": "Icefish",
+        "j": "Jackfish", "k": "Koi", "l": "Lionfish",
+        "m": "Mackerel", "n": "Needlefish", "o": "Oscar",
+        "p": "Pufferfish", "q": "Queenfish", "r": "Rainbowfish",
+        "s": "Salmon", "t": "Tilapia", "u": "Unicornfish",
+        "v": "Viperfish", "w": "Walleye", "x": "X-ray Tetra",
+        "y": "Yellowtail", "z": "Zebrafish"
+    }
+
+    biggest_fish = None
+
+    if fish_result:
+        username = fish_result.username
+        fish_name = fish_names.get(username[0].lower(), "Goldfish")
+        biggest_fish = {
+            "name": f"{fish_name} {username}",
+            "net_cents": fish_result.net_cents
+        }
+
     return render_template(
         "dashboard.html",
         sessions=sessions,
         leaderboard=leaderboard,
+        biggest_fish=biggest_fish,
         leaderboard_period=leaderboard_period,
         leaderboard_game=leaderboard_game,
         total_profit=total_profit,

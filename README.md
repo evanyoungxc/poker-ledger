@@ -1,29 +1,52 @@
 # Poker Ledger
 
-Poker Ledger is a web application for tracking poker sessions, monitoring profits and losses, and promoting responsible gambling habits.
+Poker Ledger is a full-stack web application designed to track poker sessions, visualize financial performance, and promote responsible gambling habits through personal loss-limit alerts.
 
-The goal is to give players a clear picture of their financial activity and help them recognize when their losses are becoming excessive.
+The application helps users understand their spending patterns and recognize when losses may be becoming excessive.
+
+## Screenshots
+
+### Dashboard
+
+The dashboard provides an overview of session history, profits and losses, performance charts, and personal loss-limit monitoring.
+
+![Poker Ledger Dashboard](docs/p-dasboard.png)
+
+### Login Page
+
+Users can securely sign in to access their personal session records and financial tracking dashboard.
+
+![Poker Ledger Login](docs/login.png)
 
 ## Features
 
-- **Session Tracking:** Record, edit, and review poker sessions, including winnings and losses.
-- **Performance Dashboard:** Visualize financial results and track performance over time.
-- **Loss-Limit Alerts:** Set personal loss thresholds and receive warnings when those limits are reached. These alerts are designed to discourage excessive gambling and encourage players to stop and reassess their spending.
-- **Leaderboards:** Compare recorded results across different time periods.
-- **User Authentication:** Individual accounts with protected session records.
-- **Admin Dashboard:** Authorized administration of user accounts and session records.
+- **Session Tracking:** Add, edit, and delete poker sessions while recording profits and losses.
+- **Performance Analytics:** Visualize financial performance and review historical session data.
+- **Responsible Gambling Alerts:** Set personal loss thresholds and receive warnings when losses reach those limits. These alerts are intended to discourage excessive gambling and encourage users to reassess their spending.
+- **Leaderboards:** View recorded results across different time periods.
+- **User Authentication:** Secure account registration and login with password hashing.
+- **Admin Dashboard:** Role-restricted administrative tools for managing accounts and session records.
 
 ## Tech Stack
 
-- Python, Flask, SQLAlchemy
-- SQLite
-- HTML, CSS, JavaScript
-- Gunicorn and Nginx
+**Backend:** Python, Flask, SQLAlchemy
+
+**Frontend:** HTML, CSS, JavaScript
+
+**Database:** SQLite
+
+**Authentication & Security:** Flask-Login, Argon2 password hashing, CSRF protection, rate limiting
+
+**Deployment:** AWS EC2, Gunicorn, Nginx, HTTPS
 
 ## Project Purpose
 
-Poker Ledger combines web development, authentication, database management, and financial tracking in a practical application.
+Poker Ledger was developed as a practical full-stack application combining web development, database management, authentication, and data visualization.
 
-Its loss-limit features emphasize responsible gambling by increasing awareness of spending and encouraging users to recognize potentially harmful patterns.
+A central focus is **responsible gambling awareness**. Rather than encouraging additional gambling, the application's loss-limit alerts help users identify potentially harmful spending patterns and make more informed decisions about when to stop playing.
 
-**Disclaimer:** Poker Ledger does not guarantee financial outcomes or prevent gambling-related harm. It is a tracking and awareness tool, not gambling or financial advice.
+The project also demonstrates experience with backend development, access controls, secure authentication, and deploying a production web application.
+
+## Disclaimer
+
+Poker Ledger is intended for personal financial tracking and awareness. It does not facilitate gambling, guarantee financial outcomes, or replace professional support for gambling-related problems.

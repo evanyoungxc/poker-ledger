@@ -1,0 +1,30 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Database and user data
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Backups
+*.bak
+*.backup
+*.before-*
+*.log
+
+# Editor files
+.vscode/
+.idea/
+.DS_Store

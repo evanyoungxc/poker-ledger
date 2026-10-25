@@ -1,0 +1,217 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById("profitChart");
+    const dataElement = document.getElementById("chart-data");
+
+    if (!canvas || !dataElement) return;
+
+    let profits;
+
+    try {
+        profits = JSON.parse(dataElement.textContent);
+    } catch (error) {
+        console.error("Unable to load chart data.");
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    // Build cumulative profit/loss, starting at $0.
+    const cumulative = [0];
+    let runningTotal = 0;
+
+    profits.forEach(profit => {
+        runningTotal += profit / 100;
+        cumulative.push(runningTotal);
+    });
+
+    function drawChart() {
+        const rect = canvas.getBoundingClientRect();
+
+        if (!rect.width || !rect.height) return;
+
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const width = rect.width;
+        const height = rect.height;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const left = 55;
+        const right = 15;
+        const top = 20;
+        const bottom = 35;
+
+        const chartWidth = width - left - right;
+        const chartHeight = height - top - bottom;
+
+        const minValue = Math.min(0, ...cumulative);
+        const maxValue = Math.max(0, ...cumulative);
+
+        const padding = Math.max((maxValue - minValue) * 0.15, 5);
+
+        const minY = minValue - padding;
+        const maxY = maxValue + padding;
+
+        function xPosition(index) {
+            return left + (index / Math.max(cumulative.length - 1, 1)) * chartWidth;
+        }
+
+        function yPosition(value) {
+            return top + ((maxY - value) / (maxY - minY)) * chartHeight;
+        }
+
+        // Horizontal grid lines and dollar labels.
+        ctx.font = "11px sans-serif";
+        ctx.textAlign = "right";
+
+        for (let i = 0; i <= 4; i++) {
+            const value = maxY - (i / 4) * (maxY - minY);
+            const y = yPosition(value);
+
+            ctx.strokeStyle = "rgba(216,182,106,0.12)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(left, y);
+            ctx.lineTo(width - right, y);
+            ctx.stroke();
+
+            ctx.fillStyle = "#9aaa9e";
+            ctx.fillText(
+                (value < 0 ? "-$" : "$") + Math.abs(value).toFixed(0),
+                left - 8,
+                y + 4
+            );
+        }
+
+        // Zero-profit reference line.
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "rgba(255,255,255,0.3)";
+        ctx.beginPath();
+        ctx.moveTo(left, yPosition(0));
+        ctx.lineTo(width - right, yPosition(0));
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const isPositive = runningTotal >= 0;
+        const lineColor = isPositive ? "#68d7a0" : "#e47777";
+
+        // Gradient below the line.
+        const gradient = ctx.createLinearGradient(0, top, 0, height);
+        gradient.addColorStop(
+            0,
+            isPositive ? "rgba(104,215,160,0.25)" : "rgba(228,119,119,0.25)"
+        );
+        gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+        ctx.beginPath();
+
+        cumulative.forEach((value, index) => {
+            const x = xPosition(index);
+            const y = yPosition(value);
+
+            if (index === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+
+        ctx.lineTo(xPosition(cumulative.length - 1), yPosition(minY));
+        ctx.lineTo(xPosition(0), yPosition(minY));
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Profit/loss line.
+        ctx.beginPath();
+
+        cumulative.forEach((value, index) => {
+            const x = xPosition(index);
+            const y = yPosition(value);
+
+            if (index === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = 3;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+        // Current result marker.
+        const lastIndex = cumulative.length - 1;
+
+        ctx.beginPath();
+        ctx.arc(
+            xPosition(lastIndex),
+            yPosition(cumulative[lastIndex]),
+            5,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = "#d8b66a";
+        ctx.fill();
+
+        // X-axis labels.
+        ctx.fillStyle = "#9aaa9e";
+        ctx.textAlign = "left";
+        ctx.fillText("Start", left, height - 10);
+
+        ctx.textAlign = "right";
+        ctx.fillText(
+            `${profits.length} sessions`,
+            width - right,
+            height - 10
+        );
+    }
+
+    drawChart();
+
+    window.addEventListener("resize", drawChart);
+});
+
+// Session entry form behavior
+document.addEventListener("DOMContentLoaded", () => {
+    const mode = document.getElementById("entry-mode");
+    const buyinFields = document.getElementById("buyin-fields");
+    const netFields = document.getElementById("net-fields");
+    const dateField = document.getElementById("session-date");
+
+    if (dateField) {
+        const today = new Date();
+        const localDate = new Date(
+            today.getTime() - today.getTimezoneOffset() * 60000
+        ).toISOString().slice(0, 10);
+
+        dateField.value = localDate;
+        dateField.max = localDate;
+    }
+
+    if (!mode || !buyinFields || !netFields) return;
+
+    function updateMode() {
+        const netOnly = mode.value === "net";
+
+        buyinFields.hidden = netOnly;
+        netFields.hidden = !netOnly;
+
+        buyinFields.querySelectorAll("input").forEach(input => {
+            input.required = !netOnly;
+            input.disabled = netOnly;
+        });
+
+        netFields.querySelectorAll("input").forEach(input => {
+            input.required = netOnly;
+            input.disabled = !netOnly;
+        });
+    }
+
+    mode.addEventListener("change", updateMode);
+    updateMode();
+});

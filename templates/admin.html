@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin | Poker Ledger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+<main class="admin-wrap">
+    <h1>Poker Ledger — Admin</h1>
+    <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <section class="admin-panel">
+        <h2>Users</h2>
+        <div class="table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Username</th><th>Email</th><th>Sessions</th>
+                    <th>Profit</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user, count, profit in users %}
+                <tr>
+                    <td>{{ user.username }}{% if user.is_admin %} (Admin){% endif %}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ count }}</td>
+                    <td>${{ "%.2f"|format(profit / 100) }}</td>
+                    <td>
+                        <div class="admin-actions">
+                            <a href="{{ url_for('admin_dashboard', user_id=user.id) }}">Sessions</a>
+                            {% if user.id != current_user.id and not user.is_admin %}
+                            <form method="POST" action="{{ url_for('admin_delete_user', user_id=user.id) }}"
+                                  onsubmit="return confirm('Permanently delete this account and ALL its poker data?')">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="danger" type="submit">Delete Account</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </section>
+
+    {% if selected_user %}
+    <section class="admin-panel">
+        <h2>Sessions — {{ selected_user.username }}</h2>
+        <p><a href="{{ url_for('admin_dashboard') }}">Close sessions</a></p>
+        {% for s in sessions %}
+        <details style="margin: 12px 0; padding: 12px; border: 1px solid #64745b; border-radius: 8px;">
+            <summary>
+                {{ s.date }} — {{ s.game_type }} —
+                ${{ "%.2f"|format(s.profit_cents / 100) }}
+            </summary>
+            <form method="POST" action="{{ url_for('admin_edit_session', session_id=s.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="edit-grid">
+                    <label>Date <input type="date" name="date" value="{{ s.date }}" required></label>
+                    <label>Game Type
+                        <select name="game_type">
+                            {% for type in ['Stake', 'Home Game'] %}
+                            <option value="{{ type }}" {% if s.game_type == type %}selected{% endif %}>{{ type }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>Buy In ($)
+                        <input type="number" name="buy_in" step="0.01" min="0" max="1000000"
+                               value="{{ '%.2f'|format(s.buy_in_cents / 100) }}" required>
+                    </label>
+                    <label>Cash Out ($)
+                        <input type="number" name="cash_out" step="0.01" min="0" max="1000000"
+                               value="{{ '%.2f'|format(s.cash_out_cents / 100) }}" required>
+                    </label>
+                    <label>Notes <textarea name="notes" maxlength="500">{{ s.notes or '' }}</textarea></label>
+                    <button type="submit">Save Changes</button>
+                </div>
+            </form>
+            <form method="POST" action="{{ url_for('admin_delete_session', session_id=s.id) }}"
+                  onsubmit="return confirm('Delete this session permanently?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="danger" type="submit">Delete Session</button>
+            </form>
+        </details>
+        {% else %}
+        <p>No sessions recorded.</p>
+        {% endfor %}
+    </section>
+    {% endif %}
+</main>
+</body>
+</html>

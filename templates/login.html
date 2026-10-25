@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login | Poker Ledger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+</head>
+<body class="auth-page">
+    <main class="auth-card">
+        <div class="card-suits" aria-hidden="true">
+            <span>♠</span><span>♥</span><span>♣</span><span>♦</span>
+        </div>
+
+        <div class="brand">
+            <div class="brand-icon">♠</div>
+            <h1>POKER LEDGER</h1>
+            <p>Poker winnings tracked. Don't be a fish.</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email"
+                   autocomplete="email" required maxlength="255">
+
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password"
+                   autocomplete="current-password" required>
+
+            <button type="submit" class="primary-btn">SIGN IN ♠</button>
+        </form>
+
+        <p class="auth-footer">
+            New player? <a href="{{ url_for('register') }}">Create an account</a>
+        </p>
+<div class="creator-credit">
+    Created by <strong>Evan Young</strong>
+</div>
+
+    </main>
+</body>
+</html>

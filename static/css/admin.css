@@ -1,0 +1,188 @@
+/* Poker Ledger Admin Panel */
+
+:root {
+    color-scheme: dark;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #0c1712;
+    color: #e8e9df;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.5;
+}
+
+.admin-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 36px 24px;
+}
+
+h1 {
+    color: #d8b76c;
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+h2 {
+    color: #e6d4a5;
+    font-size: 21px;
+    margin: 0 0 20px;
+}
+
+p {
+    color: #b8c3b9;
+}
+
+a {
+    color: #d8b76c;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #f4d995;
+}
+
+.admin-panel {
+    background: #17291f;
+    border: 1px solid #344a3b;
+    border-radius: 14px;
+    padding: 24px;
+    margin: 24px 0;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    color: #d8b76c;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: #20372a;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 15px;
+    border-bottom: 1px solid #344a3b;
+    text-align: left;
+}
+
+.admin-table tr:hover td {
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.admin-actions form {
+    margin: 0;
+}
+
+button {
+    background: #d8b76c;
+    color: #102016;
+    border: 1px solid #d8b76c;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #f0d38e;
+}
+
+button.danger {
+    background: transparent;
+    color: #f08d8d;
+    border-color: #9e4848;
+}
+
+button.danger:hover {
+    background: #542727;
+}
+
+details {
+    background: #20372a;
+    border: 1px solid #344a3b !important;
+    border-radius: 10px;
+    padding: 16px !important;
+    margin-bottom: 14px;
+}
+
+summary {
+    cursor: pointer;
+    color: #e8e9df;
+    font-weight: bold;
+}
+
+.edit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.edit-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #c8d3c9;
+    font-size: 14px;
+}
+
+input,
+select,
+textarea {
+    background: #0f1d15;
+    border: 1px solid #49604c;
+    border-radius: 7px;
+    color: #fff;
+    padding: 11px;
+    width: 100%;
+    font: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 1px solid #d8b76c;
+    border-color: #d8b76c;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 44px;
+}
+
+@media (max-width: 600px) {
+    .admin-wrap {
+        padding: 20px 12px;
+    }
+
+    .admin-panel {
+        padding: 16px;
+    }
+
+    h1 {
+        font-size: 25px;
+    }
+}

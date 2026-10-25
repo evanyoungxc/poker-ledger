@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register | Poker Ledger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+</head>
+<body class="auth-page">
+    <main class="auth-card">
+        <div class="card-suits" aria-hidden="true">
+            <span>♠</span><span>♥</span><span>♣</span><span>♦</span>
+        </div>
+
+        <div class="brand">
+            <div class="brand-icon">♠</div>
+            <h1>JOIN THE TABLE</h1>
+            <p>Your personal poker profit & loss tracker.</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="username">Username</label>
+            <input id="username" type="text" name="username"
+                   autocomplete="username" minlength="3" maxlength="50" required>
+
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email"
+                   autocomplete="email" maxlength="255" required>
+
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password"
+                   autocomplete="new-password" minlength="12" maxlength="128" required>
+            <small>Use at least 12 characters.</small>
+
+            <label for="invite">Invitation Code</label>
+            <input id="invite" type="text" name="invite"
+                   autocomplete="off" required>
+
+            <button type="submit" class="primary-btn">CREATE ACCOUNT ♠</button>
+        </form>
+
+        <p class="auth-footer">
+            Already a player? <a href="{{ url_for('login') }}">Sign in</a>
+        </p>
+    </main>
+</body>
+</html>

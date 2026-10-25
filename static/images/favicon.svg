@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect x="7" y="3" width="50" height="58" rx="7"
+        fill="#10241e" stroke="#c5a45d" stroke-width="3"/>
+  <text x="13" y="19" fill="#c5a45d"
+        font-family="Georgia,serif" font-size="15" font-weight="bold">A</text>
+  <text x="32" y="44" text-anchor="middle"
+        fill="#c5a45d" font-size="34">♠</text>
+  <text x="51" y="56" text-anchor="end"
+        fill="#c5a45d" font-family="Georgia,serif" font-size="15">A</text>
+</svg>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard | Poker Ledger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+</head>
+<body class="dashboard-page">
+{% if current_user.is_authenticated and current_user.is_admin %}
+<div class="admin-nav">
+    <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-button">
+        ♠ Admin Panel
+    </a>
+</div>
+{% endif %}
+
+
+<header class="topbar">
+    <div class="logo">♠ <span>POKER LEDGER</span></div>
+
+    <div class="user-menu">
+        <span>Welcome, {{ current_user.username }}</span>
+        <form method="POST" action="{{ url_for('logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+</header>
+
+<main class="dashboard-container">
+
+    <section class="hero">
+        <div>
+            <div class="eyebrow">♠ YOUR PERSONAL POKER RECORD</div>
+            <h1>The Poker Table</h1>
+            <p>Track every session. Know exactly where you stand.</p>
+        </div>
+        <div class="hero-cards" aria-hidden="true">
+            <div class="playing-card card-back">♠</div>
+            <div class="playing-card card-front">
+                <span>A ♥</span>
+                <strong>♥</strong>
+                <span>A ♥</span>
+            </div>
+        </div>
+    </section>
+
+    {% set wins = sessions | selectattr('profit_cents', 'gt', 0) | list | length %}
+    {% set stake = sessions | selectattr('game_type', 'equalto', 'Stake') | list %}
+    {% set home = sessions | selectattr('game_type', 'equalto', 'Home Game') | list %}
+
+    <section class="stats-grid">
+
+        <article class="stat-card featured">
+            <div class="stat-icon">♠</div>
+            <p>Total Profit / Loss</p>
+            <h2 class="{{ 'positive' if total_profit >= 0 else 'negative' }}">
+                {{ '+' if total_profit > 0 else '-' if total_profit < 0 else '' }}${{ '%.2f' | format((total_profit | abs) / 100) }}
+            </h2>
+            <small>All-time net results</small>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon">♣</div>
+            <p>Total Sessions</p>
+            <h2>{{ sessions | length }}</h2>
+            <small>Sessions recorded</small>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon red-suit">♥</div>
+            <p>Winning Sessions</p>
+            <h2>{{ wins }}</h2>
+            <small>
+                {{ '%.1f' | format((wins / (sessions | length) * 100) if sessions else 0) }}% win rate
+            </small>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-icon red-suit">♦</div>
+            <p>Average Profit / Session</p>
+            {% set average = total_profit / (sessions | length) if sessions else 0 %}
+            <h2 class="{{ 'positive' if average >= 0 else 'negative' }}">
+                {{ '+' if average > 0 else '-' if average < 0 else '' }}${{ '%.2f' | format((average | abs) / 100) }}
+            </h2>
+            <small>Across all sessions</small>
+        </article>
+
+    </section>
+
+    <section class="content-grid">
+
+        <article class="panel chart-panel">
+            <div class="panel-heading">
+                <div>
+                    <h3>Profit & Loss</h3>
+                    <p>Your performance over time</p>
+                </div>
+                <span class="panel-symbol">♠</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="profitChart" aria-label="Cumulative profit and loss chart" role="img"></canvas>
+            </div>
+        </article>
+
+        <article class="panel breakdown-panel">
+            <div class="panel-heading">
+                <div>
+                    <h3>Game Breakdown</h3>
+                    <p>Stake vs. Home Games</p>
+                </div>
+                <span class="panel-symbol">♣</span>
+            </div>
+
+            {% set stake_total = stake | sum(attribute='profit_cents') %}
+            {% set home_total = home | sum(attribute='profit_cents') %}
+
+            <div class="breakdown-item">
+                <div class="breakdown-label">
+                    <span>♠ Stake</span>
+                    <span>{{ stake | length }} sessions</span>
+                </div>
+                <strong class="{{ 'positive' if stake_total >= 0 else 'negative' }}">
+                    {{ '+' if stake_total > 0 else '-' if stake_total < 0 else '' }}${{ '%.2f' | format((stake_total | abs) / 100) }}
+                </strong>
+            </div>
+
+            <div class="breakdown-item">
+                <div class="breakdown-label">
+                    <span>♥ Home Games</span>
+                    <span>{{ home | length }} sessions</span>
+                </div>
+                <strong class="{{ 'positive' if home_total >= 0 else 'negative' }}">
+                    {{ '+' if home_total > 0 else '-' if home_total < 0 else '' }}${{ '%.2f' | format((home_total | abs) / 100) }}
+                </strong>
+            </div>
+        </article>
+
+    </section>
+
+
+    <section class="panel session-form-panel" id="add-session">
+        <div class="panel-heading">
+            <div>
+                <h3>♠ Add a Session</h3>
+                <p>Record your latest results at the table</p>
+            </div>
+            <span class="panel-symbol">♥</span>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('add_session') }}" class="session-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-grid">
+                <div>
+                    <label for="session-date">Date</label>
+                    <input id="session-date" type="date" name="date" required>
+                </div>
+
+                <div>
+                    <label for="game-type">Where did you play?</label>
+                    <select id="game-type" name="game_type" required>
+                        <option value="Home Game">♠ Home Game</option>
+                        <option value="Stake">♥ Stake</option>
+                    </select>
+                </div>
+            </div>
+
+            <label for="entry-mode">How do you want to enter the result?</label>
+            <select id="entry-mode" name="entry_mode">
+                <option value="buyin">Buy-in and Cash-out</option>
+                <option value="net">Net Profit / Loss</option>
+            </select>
+
+            <div id="buyin-fields" class="form-grid">
+                <div>
+                    <label for="buy-in">Buy-in ($)</label>
+                    <input id="buy-in" type="number" name="buy_in"
+                           min="0" step="0.01" placeholder="50.00" required>
+                </div>
+
+                <div>
+                    <label for="cash-out">Cash-out ($)</label>
+                    <input id="cash-out" type="number" name="cash_out"
+                           min="0" step="0.01" placeholder="85.00" required>
+                </div>
+            </div>
+
+            <div id="net-fields" hidden>
+                <label for="net-profit">Net Profit / Loss ($)</label>
+                <input id="net-profit" type="number" name="net_profit"
+                       step="0.01" placeholder="-25.00">
+                <small>Enter a negative number for a loss.</small>
+            </div>
+
+            <label for="session-notes">Notes (optional)</label>
+            <textarea id="session-notes" name="notes" maxlength="500"
+                      rows="3" placeholder="Anything worth remembering?"></textarea>
+
+            <button type="submit" class="primary-btn">
+                ♠ SAVE SESSION
+            </button>
+        </form>
+    </section>
+
+
+    <!-- Loss Limit Settings -->
+    <section class="panel loss-limit-panel" id="loss-limit">
+        <div class="panel-heading">
+            <div>
+                <h3>♠ Loss Limit Alerts</h3>
+                <p>Set a personal limit and track your losses</p>
+            </div>
+            <span class="panel-symbol">♠</span>
+        </div>
+
+        {% if loss_alert %}
+        <div class="loss-warning" role="alert">
+            <strong>⚠ Loss Limit Reached</strong>
+            <p>
+                You're down
+                ${{ '%.2f' | format((-period_profit) / 100) }}
+                for your selected period.
+                Your limit is
+                ${{ '%.2f' | format(loss_limit.threshold_cents / 100) }}.
+                Consider stopping play for now.
+            </p>
+        </div>
+        {% endif %}
+
+        <form method="POST"
+              action="{{ url_for('update_loss_limit') }}"
+              class="session-form loss-limit-form">
+
+            <input type="hidden" name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <label class="loss-toggle">
+                <input type="checkbox" name="enabled"
+                       {% if loss_limit and loss_limit.enabled %}checked{% endif %}>
+                Enable loss alerts
+            </label>
+
+            <div class="form-grid">
+                <div>
+                    <label for="loss-threshold">Loss Limit ($)</label>
+                    <input id="loss-threshold"
+                           type="number"
+                           name="threshold"
+                           min="0.01"
+                           max="1000000"
+                           step="0.01"
+                           value="{{ '%.2f' | format(loss_limit.threshold_cents / 100 if loss_limit else 50) }}"
+                           required>
+                </div>
+
+                <div>
+                    <label for="loss-period">Tracking Period</label>
+                    <select id="loss-period" name="period">
+                        {% for value, label in [
+                            ('daily', 'Daily'),
+                            ('weekly', 'Weekly'),
+                            ('overall', 'Overall')
+                        ] %}
+                        <option value="{{ value }}"
+                            {% if (loss_limit.period if loss_limit else 'daily') == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <p class="loss-helper">
+                Alerts are based on net results. Wins offset losses
+                within the selected period.
+            </p>
+
+            <button type="submit" class="primary-btn">
+                ♠ SAVE LOSS LIMIT
+            </button>
+        </form>
+    </section>
+
+
+    <!-- All-Time Leaderboard -->
+    <section class="panel leaderboard-panel">
+        <div class="panel-heading">
+            <div>
+                <h3>♠ Leaderboard</h3>
+                <p>Rankings for everyone in Poker Ledger</p>
+            </div>
+            <span class="panel-symbol">♛</span>
+        </div>
+
+        <form method="GET" action="{{ url_for('dashboard') }}"
+              class="leaderboard-filter">
+            <label for="leaderboard-period">Time Period</label>
+            <select id="leaderboard-period"
+                    name="leaderboard_period"
+                    onchange="this.form.submit()">
+                <option value="all"
+                    {% if leaderboard_period == 'all' %}selected{% endif %}>
+                    All Time
+                </option>
+                <option value="month"
+                    {% if leaderboard_period == 'month' %}selected{% endif %}>
+                    This Month
+                </option>
+                <option value="week"
+                    {% if leaderboard_period == 'week' %}selected{% endif %}>
+                    This Week
+                </option>
+            </select>
+        </form>
+
+        <div class="table-scroll">
+            <table class="history-table leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Sessions</th>
+                        <th>Total Profit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in leaderboard %}
+                    <tr>
+                        <td class="leaderboard-rank">
+                            {% if loop.index == 1 %}🥇
+                            {% elif loop.index == 2 %}🥈
+                            {% elif loop.index == 3 %}🥉
+                            {% else %}#{{ loop.index }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ player.username }}</strong>
+                            {% if player.username == current_user.username %}
+                                <span class="leaderboard-you">YOU</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ player.sessions }}</td>
+                        <td class="{{ 'positive' if player.profit_cents >= 0 else 'negative' }}">
+                            {{ '+' if player.profit_cents > 0 else '-' if player.profit_cents < 0 else '' }}${{ '%.2f' | format((player.profit_cents | abs) / 100) }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            No players registered yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel history-panel">
+        <div class="panel-heading">
+            <div>
+                <h3>Session History</h3>
+                <p>Your recorded poker results</p>
+            </div>
+            <span class="panel-symbol">♦</span>
+        </div>
+
+        <div class="table-scroll">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Game</th>
+                        <th>Buy-in</th>
+                        <th>Cash-out</th>
+                        <th>Net</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in sessions %}
+                    <tr>
+                        <td>{{ session.date.strftime('%b %d, %Y') }}</td>
+                        <td>{{ session.game_type }}</td>
+                        <td>${{ '%.2f' | format(session.buy_in_cents / 100) }}</td>
+                        <td>${{ '%.2f' | format(session.cash_out_cents / 100) }}</td>
+                        <td class="{{ 'positive' if session.profit_cents >= 0 else 'negative' }}">
+                            {{ '+' if session.profit_cents > 0 else '-' if session.profit_cents < 0 else '' }}${{ '%.2f' | format((session.profit_cents | abs) / 100) }}
+                        </td>
+                        <td>
+                            <a class="session-edit-btn"
+                               href="{{ url_for('edit_session', session_id=session.id) }}">
+                                Edit
+                            </a>
+                            <form method="POST"
+                                  action="{{ url_for('delete_session', session_id=session.id) }}"
+                                  class="session-delete-form"
+                                  onsubmit="return confirm('Delete this poker session permanently?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="session-delete-btn">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            ♠ No sessions recorded yet. Your poker journey starts here.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="dashboard-footer">
+        ♠ ♥ ♣ ♦ &nbsp; POKER LEDGER
+    </footer>
+
+</main>
+
+<script id="chart-data" type="application/json">
+{{ sessions | reverse | map(attribute='profit_cents') | list | tojson }}
+</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+</html>

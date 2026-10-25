@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Session | Poker Ledger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+</head>
+
+<body>
+<main class="edit-page">
+
+    <div class="edit-topbar">
+        <a href="{{ url_for('dashboard') }}" class="edit-back">
+            ← Back to Dashboard
+        </a>
+        <span class="edit-brand">♠ POKER LEDGER</span>
+    </div>
+
+    <section class="panel session-form-panel">
+        <div class="panel-heading">
+            <div>
+                <h3>♠ Edit Session</h3>
+                <p>Update your poker session details</p>
+            </div>
+            <span class="panel-symbol">♦</span>
+        </div>
+
+        <form method="POST"
+              action="{{ url_for('edit_session', session_id=session.id) }}"
+              class="session-form">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-grid">
+                <div>
+                    <label for="edit-date">Date</label>
+                    <input id="edit-date"
+                           type="date"
+                           name="date"
+                           value="{{ session.date.isoformat() }}"
+                           required>
+                </div>
+
+                <div>
+                    <label for="edit-game">Where did you play?</label>
+                    <select id="edit-game" name="game_type" required>
+                        <option value="Home Game"
+                            {% if session.game_type == 'Home Game' %}selected{% endif %}>
+                            ♠ Home Game
+                        </option>
+                        <option value="Stake"
+                            {% if session.game_type == 'Stake' %}selected{% endif %}>
+                            ♥ Stake
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <label for="edit-mode">How do you want to enter the result?</label>
+            <select id="edit-mode" name="entry_mode">
+                <option value="net"
+                    {% if session.entry_mode == 'net' %}selected{% endif %}>
+                    Net Profit / Loss
+                </option>
+                <option value="buyin"
+                    {% if session.entry_mode == 'buyin' %}selected{% endif %}>
+                    Buy-in and Cash-out
+                </option>
+            </select>
+
+            <div id="edit-net-fields">
+                <label for="edit-net">Net Profit / Loss ($)</label>
+                <input id="edit-net"
+                       type="number"
+                       name="net_profit"
+                       step="0.01"
+                       min="-1000000"
+                       max="1000000"
+                       value="{{ '%.2f' | format(session.profit_cents / 100) }}">
+                <small>Use a negative number for a loss.</small>
+            </div>
+
+            <div id="edit-buyin-fields" class="form-grid">
+                <div>
+                    <label for="edit-buyin">Buy-in ($)</label>
+                    <input id="edit-buyin"
+                           type="number"
+                           name="buy_in"
+                           min="0"
+                           max="1000000"
+                           step="0.01"
+                           value="{{ '%.2f' | format(session.buy_in_cents / 100) }}">
+                </div>
+
+                <div>
+                    <label for="edit-cashout">Cash-out ($)</label>
+                    <input id="edit-cashout"
+                           type="number"
+                           name="cash_out"
+                           min="0"
+                           max="1000000"
+                           step="0.01"
+                           value="{{ '%.2f' | format(session.cash_out_cents / 100) }}">
+                </div>
+            </div>
+
+            <label for="edit-notes">Notes (optional)</label>
+            <textarea id="edit-notes"
+                      name="notes"
+                      maxlength="500"
+                      rows="3">{{ session.notes or '' }}</textarea>
+
+            <div class="edit-actions">
+                <button type="submit" class="primary-btn">
+                    ♠ SAVE CHANGES
+                </button>
+
+                <a href="{{ url_for('dashboard') }}" class="edit-cancel">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </section>
+
+</main>
+
+<script>
+const mode = document.getElementById("edit-mode");
+const netFields = document.getElementById("edit-net-fields");
+const buyinFields = document.getElementById("edit-buyin-fields");
+const netInput = document.getElementById("edit-net");
+const buyinInput = document.getElementById("edit-buyin");
+const cashoutInput = document.getElementById("edit-cashout");
+
+function updateEditFields() {
+    const isNet = mode.value === "net";
+
+    netFields.style.display = isNet ? "block" : "none";
+    buyinFields.style.display = isNet ? "none" : "grid";
+
+    netInput.required = isNet;
+    buyinInput.required = !isNet;
+    cashoutInput.required = !isNet;
+}
+
+mode.addEventListener("change", updateEditFields);
+updateEditFields();
+</script>
+
+</body>
+</html>

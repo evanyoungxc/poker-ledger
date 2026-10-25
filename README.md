@@ -10,7 +10,7 @@ The application helps users understand their spending patterns and recognize whe
 
 The dashboard provides an overview of session history, profits and losses, performance charts, and personal loss-limit monitoring.
 
-![Poker Ledger Dashboard](docs/p-dasboard.png)
+![Poker Ledger Dashboard](docs/p-dashboard.png)
 
 ### Login Page
 

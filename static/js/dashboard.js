@@ -317,3 +317,28 @@ document.addEventListener("DOMContentLoaded", () => {
         button.setAttribute("aria-expanded", String(expanded));
     });
 });
+
+// Poker Ledger splash screen — minimum 1.5 seconds
+(() => {
+    const startedAt = performance.now();
+    const minimumDuration = 1500;
+
+    function hidePokerLoader() {
+        const loader = document.getElementById("poker-loader");
+        if (!loader) return;
+
+        const elapsed = performance.now() - startedAt;
+        const remaining = Math.max(0, minimumDuration - elapsed);
+
+        setTimeout(() => {
+            loader.classList.add("is-hidden");
+            setTimeout(() => loader.remove(), 450);
+        }, remaining);
+    }
+
+    if (document.readyState === "complete") {
+        hidePokerLoader();
+    } else {
+        window.addEventListener("load", hidePokerLoader, { once: true });
+    }
+})();

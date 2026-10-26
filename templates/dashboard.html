@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard | Poker Ledger</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='mobile7') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='splash2') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
 
     <!-- Poker Ledger PWA -->
@@ -18,6 +18,19 @@
 
 </head>
 <body class="dashboard-page">
+
+<div id="poker-loader" class="poker-loader" role="status" aria-label="Loading Poker Ledger">
+    <div class="poker-loader-content">
+        <div class="poker-loader-chip">♠</div>
+        <div class="poker-loader-title">POKER LEDGER</div>
+        <div class="poker-loader-subtitle">SHUFFLING THE DECK...</div>
+        <div class="poker-loader-track">
+            <div class="poker-loader-progress"></div>
+        </div>
+        <div class="poker-loader-credit">Developed by Evan Young</div>
+    </div>
+</div>
+
 
 <nav class="quick-sidebar" aria-label="Dashboard navigation">
     <div class="quick-sidebar-title">POKER LEDGER</div>
@@ -512,7 +525,7 @@
 <script id="chart-data" type="application/json">
 {{ sessions | reverse | map(attribute='profit_cents') | list | tojson }}
 </script>
-<script src="{{ url_for('static', filename='js/dashboard.js', v='mobile7') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js', v='splash2') }}"></script>
 
 
 <nav class="mobile-bottom-nav" aria-label="Mobile navigation">

@@ -1729,3 +1729,109 @@ html {
         margin: 0 auto !important;
     }
 }
+
+/* Poker Ledger loading screen — desktop and mobile */
+.poker-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #091b14;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.poker-loader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.poker-loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    padding: 24px;
+}
+
+.poker-loader-chip {
+    width: 86px;
+    height: 86px;
+    display: grid;
+    place-items: center;
+    border: 2px solid #b99b59;
+    border-radius: 50%;
+    background: #112b1d;
+    color: #e4c77d;
+    font-size: 48px;
+    box-shadow: 0 0 35px rgba(185, 155, 89, 0.14);
+    animation: poker-chip-pulse 1.8s ease-in-out infinite;
+}
+
+.poker-loader-title {
+    color: #e4c77d;
+    font-size: clamp(23px, 5vw, 32px);
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.poker-loader-subtitle {
+    color: #a8b9aa;
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+.poker-loader-track {
+    width: 180px;
+    height: 3px;
+    background: #334a39;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.poker-loader-progress {
+    width: 40%;
+    height: 100%;
+    background: #d3b36b;
+    border-radius: 10px;
+    animation: poker-loading 1.2s ease-in-out infinite;
+}
+
+@keyframes poker-chip-pulse {
+    50% {
+        transform: scale(1.07);
+        box-shadow: 0 0 45px rgba(185, 155, 89, 0.3);
+    }
+}
+
+@keyframes poker-loading {
+    0% { transform: translateX(-110%); }
+    100% { transform: translateX(350%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .poker-loader-chip,
+    .poker-loader-progress {
+        animation: none;
+    }
+}
+
+/* Splash screen developer signature */
+.poker-loader-credit {
+    margin-top: 18px;
+    color: #b99b59;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+    .poker-loader-credit {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+}

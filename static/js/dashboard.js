@@ -215,3 +215,105 @@ document.addEventListener("DOMContentLoaded", () => {
     mode.addEventListener("change", updateMode);
     updateMode();
 });
+
+/* Individual session history pagination */
+document.addEventListener("DOMContentLoaded", () => {
+    const table = document.getElementById("session-history-table");
+    const pagination = document.getElementById("session-pagination");
+    const info = document.getElementById("session-page-info");
+    const buttons = document.getElementById("session-page-buttons");
+
+    if (!table || !pagination || !info || !buttons) return;
+
+    const rows = Array.from(table.querySelectorAll("tbody tr"))
+        .filter(row => !row.querySelector(".empty-state"));
+
+    const perPage = 10;
+    const totalPages = Math.ceil(rows.length / perPage);
+    let currentPage = 1;
+
+    if (totalPages <= 1) return;
+
+    pagination.hidden = false;
+
+    function renderPage() {
+        const start = (currentPage - 1) * perPage;
+        const end = Math.min(start + perPage, rows.length);
+
+        rows.forEach((row, index) => {
+            row.hidden = index < start || index >= end;
+            row.style.display = row.hidden ? "none" : "";
+        });
+
+        info.textContent =
+            `Showing ${start + 1}–${end} of ${rows.length} sessions`;
+
+        buttons.replaceChildren();
+
+        function addButton(label, page, disabled, active = false) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = label;
+            button.disabled = disabled;
+            button.className = active ? "page-button active" : "page-button";
+
+            button.addEventListener("click", () => {
+                currentPage = page;
+                renderPage();
+                document.getElementById("session-history")
+                    ?.scrollIntoView({ behavior: "smooth" });
+            });
+
+            buttons.appendChild(button);
+        }
+
+        addButton("‹", currentPage - 1, currentPage === 1);
+
+        for (let page = 1; page <= totalPages; page++) {
+            if (
+                page === 1 ||
+                page === totalPages ||
+                Math.abs(page - currentPage) <= 1
+            ) {
+                addButton(String(page), page, false, page === currentPage);
+            } else if (
+                page === 2 && currentPage > 3 ||
+                page === totalPages - 1 && currentPage < totalPages - 2
+            ) {
+                const dots = document.createElement("span");
+                dots.textContent = "…";
+                buttons.appendChild(dots);
+            }
+        }
+
+        addButton("›", currentPage + 1, currentPage === totalPages);
+    }
+
+    renderPage();
+});
+
+// Mobile analytics expand/collapse
+document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.querySelector(".mobile-analytics-details");
+    const analytics = document.querySelector("#mobile-analytics-content");
+
+    if (!toggle || !analytics) return;
+
+    toggle.addEventListener("toggle", () => {
+        analytics.style.display = toggle.open ? "" : "none";
+    });
+});
+
+// Expand/collapse leaderboard on mobile
+document.addEventListener("DOMContentLoaded", () => {
+    const board = document.querySelector("#leaderboard");
+    const button = document.querySelector(".mobile-leaderboard-toggle");
+
+    if (!board || !button) return;
+
+    button.addEventListener("click", () => {
+        const expanded = board.classList.toggle("leaderboard-expanded");
+        button.textContent = expanded ? "Show Top 3" : "Show All Rankings";
+        button.setAttribute("aria-expanded", String(expanded));
+    });
+});

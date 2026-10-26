@@ -856,3 +856,876 @@ html {
         margin: 12px auto;
     }
 }
+
+/* Weekly fish section */
+
+.fish-of-week {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid #38513e;
+}
+
+.fish-of-week .biggest-fish-title {
+    margin-bottom: 14px;
+}
+
+/* Session history pagination */
+
+.session-pagination {
+    margin-top: 22px;
+    text-align: center;
+}
+
+.session-pagination[hidden] {
+    display: none;
+}
+
+.session-page-info {
+    color: #aab7ac;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.session-page-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.page-button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    background: #14251b;
+    border: 1px solid #38513e;
+    border-radius: 8px;
+    color: #e8e9df;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.page-button:hover:not(:disabled),
+.page-button.active {
+    background: #d8b76c;
+    color: #14251b;
+    border-color: #d8b76c;
+}
+
+.page-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* Poker Ledger mobile improvements */
+@media (max-width: 600px) {
+
+    .dashboard-page {
+        overflow-x: clip;
+    }
+
+    .dashboard-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 16px 12px 30px;
+    }
+
+    /* Compact mobile navigation */
+    .quick-sidebar {
+        position: sticky;
+        top: 0;
+        left: auto;
+        transform: none;
+        width: 100%;
+        margin: 0;
+        padding: 8px 12px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 8px;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+        border-radius: 0;
+        z-index: 900;
+    }
+
+    .quick-sidebar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .quick-sidebar a {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        min-height: 44px;
+        padding: 11px 13px;
+        border: 1px solid #38513e;
+        background: #1a3023;
+        border-radius: 9px;
+    }
+
+    .quick-sidebar a span {
+        font-size: 12px;
+    }
+
+    /* Header and hero */
+    .topbar {
+        padding: 12px;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .user-menu {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .hero {
+        min-height: auto;
+        padding: 22px 18px;
+        gap: 12px;
+    }
+
+    .hero h1 {
+        font-size: clamp(25px, 7vw, 34px);
+    }
+
+    .hero-cards {
+        display: none;
+    }
+
+    /* Prevent grid content from overflowing */
+    .stats-grid,
+    .content-grid,
+    .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stats-grid > *,
+    .content-grid > *,
+    .form-grid > * {
+        min-width: 0;
+    }
+
+    .panel {
+        min-width: 0;
+    }
+
+    /* Easier form controls */
+    .session-form input,
+    .session-form select,
+    .session-form textarea,
+    .loss-limit-form input,
+    .loss-limit-form select {
+        max-width: 100%;
+        font-size: 16px;
+    }
+
+    .session-form button,
+    .loss-limit-form button {
+        min-height: 44px;
+    }
+
+    /* Leaderboard filters */
+    .leaderboard-filter {
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        gap: 9px;
+    }
+
+    .leaderboard-filter select {
+        width: 100%;
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    /* Tables remain scrollable rather than clipping */
+    .table-scroll {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .history-table {
+        font-size: 12px;
+    }
+
+    .history-table th,
+    .history-table td {
+        padding: 10px 8px;
+    }
+
+    /* Fish panel */
+    .biggest-fish-panel {
+        position: static;
+        transform: none;
+        width: calc(100% - 24px);
+        max-width: none;
+        margin: 12px auto;
+        padding: 16px;
+    }
+
+    .biggest-fish-title {
+        margin-bottom: 8px;
+    }
+
+    .fish-of-week {
+        margin-top: 16px;
+        padding-top: 16px;
+    }
+
+    /* Pagination */
+    .session-page-buttons {
+        gap: 6px;
+    }
+
+    .page-button {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    #dashboard-top,
+    #add-session,
+    #leaderboard,
+    #session-history,
+    #loss-limit {
+        scroll-margin-top: 85px;
+    }
+}
+
+/* Mobile session history overflow fix */
+@media (max-width: 600px) {
+
+    .history-panel {
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .history-panel .table-scroll {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #session-history-table {
+        width: max-content;
+        min-width: 100%;
+        table-layout: auto;
+    }
+
+    #session-history-table th,
+    #session-history-table td {
+        white-space: nowrap;
+        padding: 10px 9px;
+    }
+
+    #session-history-table .session-delete-form {
+        display: inline-block;
+        margin: 4px 0 4px 6px;
+    }
+
+    #session-history-table .session-edit-btn,
+    #session-history-table .session-delete-btn {
+        display: inline-block;
+        max-width: 100%;
+        box-sizing: border-box;
+        white-space: nowrap;
+        padding: 9px 11px;
+    }
+
+    .session-pagination {
+        max-width: 100%;
+        overflow: hidden;
+    }
+}
+
+/* iPhone bottom navigation */
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1100;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+        background: #0b241a;
+        border-top: 1px solid #38513e;
+        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.35);
+    }
+
+    .mobile-bottom-nav a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        min-height: 48px;
+        color: #e8e9df;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .mobile-bottom-nav a span {
+        color: #d8b76c;
+        font-size: 23px;
+        line-height: 1;
+    }
+
+    .dashboard-container {
+        padding-bottom: calc(105px + env(safe-area-inset-bottom));
+    }
+
+    .mobile-bottom-nav a:focus-visible {
+        outline: 2px solid #d8b76c;
+        border-radius: 8px;
+    }
+}
+
+/* Mobile session cards */
+@media (max-width: 600px) {
+
+    .history-panel .table-scroll {
+        overflow: visible;
+    }
+
+    #session-history-table {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+
+    #session-history-table thead {
+        display: none;
+    }
+
+    #session-history-table tbody {
+        display: block;
+    }
+
+    #session-history-table tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px 8px;
+        margin-bottom: 12px;
+        padding: 16px;
+        background: #14251b;
+        border: 1px solid #38513e;
+        border-radius: 12px;
+    }
+
+    #session-history-table tbody td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0;
+        min-width: 0;
+        white-space: normal;
+        text-align: right;
+    }
+
+    #session-history-table tbody td::before {
+        content: attr(data-label);
+        color: #aab7ac;
+        font-size: 12px;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    #session-history-table tbody td:nth-child(1),
+    #session-history-table tbody td:nth-child(2),
+    #session-history-table tbody td:nth-child(3),
+    #session-history-table tbody td:nth-child(4),
+    #session-history-table tbody td:nth-child(5),
+    #session-history-table tbody td:nth-child(6) {
+        grid-column: 1 / -1;
+    }
+
+    #session-history-table tbody td:nth-child(5) {
+        padding-top: 10px;
+        border-top: 1px solid #38513e;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    #session-history-table tbody td:nth-child(6) {
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    #session-history-table tbody td:nth-child(6)::before {
+        margin-right: auto;
+    }
+
+    #session-history-table .session-edit-btn,
+    #session-history-table .session-delete-btn {
+        min-height: 40px;
+        padding: 10px 14px;
+    }
+
+    #session-history-table .session-delete-form {
+        margin: 0;
+    }
+
+    #session-history-table tbody tr:has(.empty-state) {
+        display: block;
+    }
+
+    #session-history-table .empty-state {
+        display: block;
+        text-align: center;
+    }
+
+    #session-history-table .empty-state::before {
+        content: none;
+    }
+}
+
+/* Mobile app layout refinements */
+@media (max-width: 600px) {
+
+    /* Replace desktop sidebar with mobile bottom navigation */
+    .quick-sidebar {
+        display: none !important;
+    }
+
+    /* Compact header */
+    .topbar {
+        padding: 12px 14px !important;
+        gap: 8px;
+    }
+
+    .dashboard-container {
+        padding-top: 12px !important;
+        padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    }
+
+    /* Reduce oversized spacing */
+    .dashboard-container > * {
+        margin-bottom: 14px;
+    }
+
+    .panel {
+        padding: 16px !important;
+        border-radius: 14px;
+    }
+
+    .panel-heading {
+        margin-bottom: 14px;
+    }
+
+    /* Smaller fish panel */
+    .biggest-fish-panel {
+        padding: 14px !important;
+        margin-bottom: 14px;
+    }
+
+    .biggest-fish-panel h2,
+    .biggest-fish-panel h3 {
+        margin: 5px 0;
+    }
+
+    /* Compact session cards */
+    #session-history-table tbody tr {
+        gap: 5px 8px !important;
+        padding: 12px !important;
+        margin-bottom: 8px !important;
+    }
+
+    #session-history-table tbody td {
+        padding: 5px 0 !important;
+        font-size: 13px;
+    }
+
+    #session-history-table tbody td::before {
+        display: inline-block !important;
+        font-size: 12px;
+        color: #aab7ac;
+    }
+
+    #session-history-table tbody td:nth-child(5) {
+        font-size: 16px;
+        padding-top: 8px !important;
+    }
+
+    #session-history-table .session-edit-btn,
+    #session-history-table .session-delete-btn {
+        min-height: 36px;
+        padding: 7px 12px;
+        font-size: 12px;
+    }
+
+    /* Smaller form spacing */
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    /* Keep bottom nav above iPhone home indicator */
+    .mobile-bottom-nav {
+        padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    }
+}
+
+/* Compact mobile dashboard */
+.mobile-analytics-details {
+    display: none;
+}
+
+@media (max-width: 600px) {
+
+    .mobile-hide-hero {
+        display: none !important;
+    }
+
+    .biggest-fish-panel {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 12px !important;
+        text-align: center;
+    }
+
+    .biggest-fish-panel > .biggest-fish-title,
+    .biggest-fish-panel > .biggest-fish-name,
+    .biggest-fish-panel > .biggest-fish-loss,
+    .biggest-fish-panel > .biggest-fish-caption {
+        grid-column: 1;
+    }
+
+    .fish-of-week {
+        grid-column: 2;
+        grid-row: 1 / span 4;
+        border: 0 !important;
+        padding: 0 0 0 10px !important;
+        margin: 0 !important;
+        border-left: 1px solid #38513e !important;
+    }
+
+    .biggest-fish-title {
+        font-size: 10px !important;
+        letter-spacing: 0 !important;
+    }
+
+    .biggest-fish-name {
+        font-size: 14px !important;
+        overflow-wrap: anywhere;
+    }
+
+    .biggest-fish-loss {
+        font-size: 20px !important;
+    }
+
+    .biggest-fish-caption {
+        font-size: 10px !important;
+    }
+
+    .stats-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+    }
+
+    .stat-card {
+        padding: 12px !important;
+        min-width: 0;
+    }
+
+    .stat-card h2 {
+        font-size: clamp(20px, 6vw, 28px) !important;
+    }
+
+    .stat-card p {
+        font-size: 12px;
+    }
+
+    .stat-card small {
+        font-size: 10px;
+    }
+
+    .mobile-analytics-details {
+        display: block;
+        padding: 14px;
+        border: 1px solid #38513e;
+        border-radius: 12px;
+        background: #10271b;
+    }
+
+    .mobile-analytics-details summary {
+        color: #d8b76c;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .mobile-analytics-details:not([open]) + #mobile-analytics-content {
+        display: none !important;
+    }
+}
+
+@media (min-width: 601px) {
+    #mobile-analytics-content {
+        display: grid;
+    }
+}
+
+/* Mobile fixes: analytics and session labels */
+@media (max-width: 600px) {
+
+    .mobile-analytics-details[open] + #mobile-analytics-content {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    #session-history-table tbody td[data-label]::before {
+        content: attr(data-label) !important;
+        display: inline-block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: #b9c8bc !important;
+        font-size: 12px !important;
+        text-align: left;
+    }
+
+    #session-history-table tbody td {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #session-history-table tbody td:nth-child(6) {
+        align-items: center;
+    }
+}
+
+/* Compact mobile leaderboard */
+@media (max-width: 600px) {
+    #leaderboard:not(.leaderboard-expanded) .leaderboard-table tbody tr:nth-child(n+4) {
+        display: none;
+    }
+
+    .mobile-leaderboard-toggle {
+        display: block;
+        width: 100%;
+        margin-top: 12px;
+        padding: 12px;
+        border: 1px solid #b99b59;
+        border-radius: 10px;
+        background: #14291e;
+        color: #e4c77d;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+    }
+}
+
+@media (min-width: 601px) {
+    .mobile-leaderboard-toggle {
+        display: none;
+    }
+}
+
+/* Prevent native iOS form controls from overflowing */
+@media (max-width: 600px) {
+    .dashboard-page,
+    .dashboard-container,
+    .dashboard-container .panel,
+    .dashboard-container form,
+    .dashboard-container .form-group {
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .dashboard-container input[type="date"],
+    .dashboard-container input[type="number"],
+    .dashboard-container input[type="text"],
+    .dashboard-container select,
+    .dashboard-container textarea {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    .dashboard-container input[type="date"] {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+}
+
+/* Poker Ledger mobile repair */
+@media screen and (max-width: 600px) {
+
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .dashboard-page .quick-sidebar {
+        display: none !important;
+    }
+
+    body.dashboard-page .mobile-bottom-nav {
+        display: grid !important;
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        z-index: 99999 !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        box-sizing: border-box;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #session-history-table tbody td[data-label]::before {
+        content: attr(data-label) !important;
+        display: inline-block !important;
+        color: #b9c8bc !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 12px !important;
+    }
+
+    #session-history-table tbody td[data-label] {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .dashboard-page #session-date {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        -webkit-appearance: auto;
+        appearance: auto;
+    }
+
+    .dashboard-page .form-grid,
+    .dashboard-page .form-grid > div {
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+}
+
+/* Final iPhone date picker overflow fix */
+@media screen and (max-width: 600px) {
+    #add-session .form-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    #add-session .form-grid > div {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        overflow: hidden;
+    }
+
+    #session-date {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        font-size: 16px !important;
+        padding: 12px 8px !important;
+    }
+
+    #session-date::-webkit-date-and-time-value {
+        min-width: 0;
+        text-align: left;
+    }
+}
+
+/* Larger iPhone bottom navigation */
+@media screen and (max-width: 600px) {
+    body.dashboard-page .mobile-bottom-nav {
+        min-height: 76px !important;
+        padding: 12px 8px calc(12px + env(safe-area-inset-bottom)) !important;
+        gap: 4px !important;
+        align-items: center !important;
+    }
+
+    body.dashboard-page .mobile-bottom-nav a {
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 5px 2px !important;
+        gap: 5px !important;
+        white-space: nowrap;
+    }
+
+    body.dashboard-page .mobile-bottom-nav a span {
+        font-size: 23px !important;
+        line-height: 1 !important;
+    }
+
+    .dashboard-container {
+        padding-bottom: calc(115px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+/* Larger iPhone bottom navigation */
+@media screen and (max-width: 600px) {
+    body.dashboard-page .mobile-bottom-nav {
+        min-height: 76px !important;
+        padding: 12px 8px calc(12px + env(safe-area-inset-bottom)) !important;
+        gap: 4px !important;
+        align-items: center !important;
+    }
+
+    body.dashboard-page .mobile-bottom-nav a {
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 5px 2px !important;
+        gap: 5px !important;
+        white-space: nowrap;
+    }
+
+    body.dashboard-page .mobile-bottom-nav a span {
+        font-size: 23px !important;
+        line-height: 1 !important;
+    }
+
+    .dashboard-container {
+        padding-bottom: calc(115px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+/* Center Admin Panel button on mobile */
+@media screen and (max-width: 600px) {
+    .admin-nav {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .admin-nav-button {
+        margin: 0 auto !important;
+    }
+}

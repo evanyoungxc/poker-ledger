@@ -1,0 +1,22 @@
+{
+  "name": "Poker Ledger",
+  "short_name": "Poker Ledger",
+  "description": "Track poker sessions, profits, and leaderboards.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#071811",
+  "theme_color": "#0b241a",
+  "icons": [
+    {
+      "src": "/static/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

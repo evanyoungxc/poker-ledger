@@ -5,8 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard | Poker Ledger</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='mobile7') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+
+    <!-- Poker Ledger PWA -->
+    <link rel="manifest" href="/static/manifest.webmanifest">
+    <meta name="theme-color" content="#0b241a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Poker Ledger">
+    <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+
 </head>
 <body class="dashboard-page">
 
@@ -54,11 +63,26 @@
         <div class="biggest-fish-name">No fish yet</div>
         <div class="biggest-fish-caption">No players currently have a net loss.</div>
     {% endif %}
+
+    <div class="fish-of-week">
+        <div class="biggest-fish-title">🐠 FISH OF THE WEEK</div>
+
+        {% if fish_of_week %}
+            <div class="biggest-fish-name">{{ fish_of_week.name }}</div>
+            <div class="biggest-fish-loss">
+                -${{ '%.2f' | format((fish_of_week.net_cents | abs) / 100) }}
+            </div>
+            <div class="biggest-fish-caption">This week's net loss</div>
+        {% else %}
+            <div class="biggest-fish-name">No fish this week</div>
+            <div class="biggest-fish-caption">No net losses recorded this week.</div>
+        {% endif %}
+    </div>
 </aside>
 
 <main class="dashboard-container" id="dashboard-top">
 
-    <section class="hero">
+    <section class="hero mobile-hide-hero">
         <div>
             <div class="eyebrow">♠ YOUR PERSONAL POKER RECORD</div>
             <h1>The Poker Table</h1>
@@ -117,7 +141,10 @@
 
     </section>
 
-    <section class="content-grid">
+    <details class="mobile-analytics-details">
+            <summary>View Charts & Game Breakdown</summary>
+        </details>
+        <section class="content-grid" id="mobile-analytics-content">
 
         <article class="panel chart-panel">
             <div class="panel-heading">
@@ -240,6 +267,164 @@
     </section>
 
 
+    <!-- All-Time Leaderboard -->
+    <section class="panel leaderboard-panel" id="leaderboard">
+        <div class="panel-heading">
+            <div>
+                <h3>♠ Leaderboard</h3>
+                <p>Rankings for everyone in Poker Ledger</p>
+            </div>
+            <span class="panel-symbol">♛</span>
+        </div>
+
+        <form method="GET" action="{{ url_for('dashboard') }}#leaderboard"
+              class="leaderboard-filter">
+            <label for="leaderboard-period">Time Period</label>
+            <select id="leaderboard-period"
+                    name="leaderboard_period"
+                    onchange="this.form.submit()">
+                <option value="all"
+                    {% if leaderboard_period == 'all' %}selected{% endif %}>
+                    All Time
+                </option>
+                <option value="month"
+                    {% if leaderboard_period == 'month' %}selected{% endif %}>
+                    This Month
+                </option>
+                <option value="week"
+                    {% if leaderboard_period == 'week' %}selected{% endif %}>
+                    This Week
+                </option>
+            </select>
+
+            <label for="leaderboard-game">Game Type</label>
+            <select id="leaderboard-game"
+                    name="leaderboard_game"
+                    onchange="this.form.submit()">
+                <option value="all" {% if leaderboard_game == 'all' %}selected{% endif %}>All Games</option>
+                <option value="Stake" {% if leaderboard_game == 'Stake' %}selected{% endif %}>Stake</option>
+                <option value="Home Game" {% if leaderboard_game == 'Home Game' %}selected{% endif %}>Home Game</option>
+                <option value="Ten Card Flip" {% if leaderboard_game == 'Ten Card Flip' %}selected{% endif %}>Ten Card Flip</option>
+            </select>
+        </form>
+
+        <div class="table-scroll">
+            <table class="history-table leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Sessions</th>
+                        <th>Total Profit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in leaderboard %}
+                    <tr>
+                        <td class="leaderboard-rank">
+                            {% if loop.index == 1 %}🥇
+                            {% elif loop.index == 2 %}🥈
+                            {% elif loop.index == 3 %}🥉
+                            {% else %}#{{ loop.index }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ player.username }}</strong>
+                            {% if player.username == current_user.username %}
+                                <span class="leaderboard-you">YOU</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ player.sessions }}</td>
+                        <td class="{{ 'positive' if player.profit_cents >= 0 else 'negative' }}">
+                            {{ '+' if player.profit_cents > 0 else '-' if player.profit_cents < 0 else '' }}${{ '%.2f' | format((player.profit_cents | abs) / 100) }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            No players registered yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    <button type="button"
+            class="mobile-leaderboard-toggle"
+            aria-expanded="false">
+        Show All Rankings
+    </button>
+    </section>
+
+    <section class="panel history-panel" id="session-history">
+        <div class="panel-heading">
+            <div>
+                <h3>Session History</h3>
+                <p>Your recorded poker results</p>
+            </div>
+            <span class="panel-symbol">♦</span>
+        </div>
+
+        <div class="table-scroll">
+            <table id="session-history-table" class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Game</th>
+                        <th>Buy-in</th>
+                        <th>Cash-out</th>
+                        <th>Net</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in sessions %}
+                    <tr>
+                        <td data-label="Date">{{ session.date.strftime('%b %d, %Y') }}</td>
+                        <td data-label="Game">{{ session.game_type }}</td>
+                        <td data-label="Buy-in">${{ '%.2f' | format(session.buy_in_cents / 100) }}</td>
+                        <td data-label="Cash-out">${{ '%.2f' | format(session.cash_out_cents / 100) }}</td>
+                        <td data-label="Net" class="{{ 'positive' if session.profit_cents >= 0 else 'negative' }}">
+                            {{ '+' if session.profit_cents > 0 else '-' if session.profit_cents < 0 else '' }}${{ '%.2f' | format((session.profit_cents | abs) / 100) }}
+                        </td>
+                        <td data-label="Actions">
+                            <a class="session-edit-btn"
+                               href="{{ url_for('edit_session', session_id=session.id) }}">
+                                Edit
+                            </a>
+                            <form method="POST"
+                                  action="{{ url_for('delete_session', session_id=session.id) }}"
+                                  class="session-delete-form"
+                                  onsubmit="return confirm('Delete this poker session permanently?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="session-delete-btn">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            ♠ No sessions recorded yet. Your poker journey starts here.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <nav id="session-pagination"
+             class="session-pagination"
+             aria-label="Session history pages"
+             hidden>
+            <div id="session-page-info" class="session-page-info"></div>
+            <div id="session-page-buttons" class="session-page-buttons"></div>
+        </nav>
+</section>
+
+
     <!-- Loss Limit Settings -->
     <section class="panel loss-limit-panel" id="loss-limit">
         <div class="panel-heading">
@@ -318,150 +503,6 @@
         </form>
     </section>
 
-
-    <!-- All-Time Leaderboard -->
-    <section class="panel leaderboard-panel" id="leaderboard">
-        <div class="panel-heading">
-            <div>
-                <h3>♠ Leaderboard</h3>
-                <p>Rankings for everyone in Poker Ledger</p>
-            </div>
-            <span class="panel-symbol">♛</span>
-        </div>
-
-        <form method="GET" action="{{ url_for('dashboard') }}"
-              class="leaderboard-filter">
-            <label for="leaderboard-period">Time Period</label>
-            <select id="leaderboard-period"
-                    name="leaderboard_period"
-                    onchange="this.form.submit()">
-                <option value="all"
-                    {% if leaderboard_period == 'all' %}selected{% endif %}>
-                    All Time
-                </option>
-                <option value="month"
-                    {% if leaderboard_period == 'month' %}selected{% endif %}>
-                    This Month
-                </option>
-                <option value="week"
-                    {% if leaderboard_period == 'week' %}selected{% endif %}>
-                    This Week
-                </option>
-            </select>
-
-            <label for="leaderboard-game">Game Type</label>
-            <select id="leaderboard-game"
-                    name="leaderboard_game"
-                    onchange="this.form.submit()">
-                <option value="all" {% if leaderboard_game == 'all' %}selected{% endif %}>All Games</option>
-                <option value="Stake" {% if leaderboard_game == 'Stake' %}selected{% endif %}>Stake</option>
-                <option value="Home Game" {% if leaderboard_game == 'Home Game' %}selected{% endif %}>Home Game</option>
-                <option value="Ten Card Flip" {% if leaderboard_game == 'Ten Card Flip' %}selected{% endif %}>Ten Card Flip</option>
-            </select>
-        </form>
-
-        <div class="table-scroll">
-            <table class="history-table leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Player</th>
-                        <th>Sessions</th>
-                        <th>Total Profit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for player in leaderboard %}
-                    <tr>
-                        <td class="leaderboard-rank">
-                            {% if loop.index == 1 %}🥇
-                            {% elif loop.index == 2 %}🥈
-                            {% elif loop.index == 3 %}🥉
-                            {% else %}#{{ loop.index }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            <strong>{{ player.username }}</strong>
-                            {% if player.username == current_user.username %}
-                                <span class="leaderboard-you">YOU</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ player.sessions }}</td>
-                        <td class="{{ 'positive' if player.profit_cents >= 0 else 'negative' }}">
-                            {{ '+' if player.profit_cents > 0 else '-' if player.profit_cents < 0 else '' }}${{ '%.2f' | format((player.profit_cents | abs) / 100) }}
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="empty-state">
-                            No players registered yet.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section class="panel history-panel" id="session-history">
-        <div class="panel-heading">
-            <div>
-                <h3>Session History</h3>
-                <p>Your recorded poker results</p>
-            </div>
-            <span class="panel-symbol">♦</span>
-        </div>
-
-        <div class="table-scroll">
-            <table class="history-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Game</th>
-                        <th>Buy-in</th>
-                        <th>Cash-out</th>
-                        <th>Net</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for session in sessions %}
-                    <tr>
-                        <td>{{ session.date.strftime('%b %d, %Y') }}</td>
-                        <td>{{ session.game_type }}</td>
-                        <td>${{ '%.2f' | format(session.buy_in_cents / 100) }}</td>
-                        <td>${{ '%.2f' | format(session.cash_out_cents / 100) }}</td>
-                        <td class="{{ 'positive' if session.profit_cents >= 0 else 'negative' }}">
-                            {{ '+' if session.profit_cents > 0 else '-' if session.profit_cents < 0 else '' }}${{ '%.2f' | format((session.profit_cents | abs) / 100) }}
-                        </td>
-                        <td>
-                            <a class="session-edit-btn"
-                               href="{{ url_for('edit_session', session_id=session.id) }}">
-                                Edit
-                            </a>
-                            <form method="POST"
-                                  action="{{ url_for('delete_session', session_id=session.id) }}"
-                                  class="session-delete-form"
-                                  onsubmit="return confirm('Delete this poker session permanently?');">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="session-delete-btn">
-                                    Delete
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="empty-state">
-                            ♠ No sessions recorded yet. Your poker journey starts here.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
-
     <footer class="dashboard-footer">
         ♠ ♥ ♣ ♦ &nbsp; POKER LEDGER
     </footer>
@@ -471,7 +512,15 @@
 <script id="chart-data" type="application/json">
 {{ sessions | reverse | map(attribute='profit_cents') | list | tojson }}
 </script>
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js', v='mobile7') }}"></script>
+
+
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    <a href="#dashboard-top"><span>⌂</span>Home</a>
+    <a href="#add-session"><span>＋</span>Add</a>
+    <a href="#leaderboard"><span>♛</span>Rankings</a>
+    <a href="#session-history"><span>▤</span>History</a>
+</nav>
 
 </body>
 </html>

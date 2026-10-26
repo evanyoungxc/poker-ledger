@@ -82,7 +82,7 @@ def dashboard():
     )
 
     today = date.today()
-    week_start = today - timedelta(days=today.weekday())
+    week_start = today - timedelta(days=(today.weekday() + 1) % 7)
 
     if loss_limit and loss_limit.enabled:
         if loss_limit.period == "daily":
@@ -114,7 +114,7 @@ def dashboard():
     if leaderboard_period == "month":
         start_date = today.replace(day=1)
     elif leaderboard_period == "week":
-        start_date = today - timedelta(days=today.weekday())
+        start_date = today - timedelta(days=(today.weekday() + 1) % 7)
     else:
         start_date = None
 
@@ -210,11 +210,56 @@ def dashboard():
             "net_cents": fish_result.net_cents
         }
 
+    # Fish of the Week: largest net loss since Monday.
+    fish_week_start = date.today() - timedelta(days=(date.today().weekday() + 1) % 7)
+
+    weekly_fish_result = db.session.execute(
+        select(
+            User.username,
+            func.sum(
+                PokerSession.cash_out_cents -
+                PokerSession.buy_in_cents
+            ).label("net_cents")
+        )
+        .join(PokerSession, PokerSession.user_id == User.id)
+        .where(
+            PokerSession.date >= fish_week_start,
+            PokerSession.date <= date.today()
+        )
+        .group_by(User.id, User.username)
+        .having(
+            func.sum(
+                PokerSession.cash_out_cents -
+                PokerSession.buy_in_cents
+            ) < 0
+        )
+        .order_by(
+            func.sum(
+                PokerSession.cash_out_cents -
+                PokerSession.buy_in_cents
+            ).asc(),
+            User.username.asc()
+        )
+        .limit(1)
+    ).first()
+
+    fish_of_week = None
+
+    if weekly_fish_result:
+        username = weekly_fish_result.username
+        fish_name = fish_names.get(username[0].lower(), "Goldfish")
+
+        fish_of_week = {
+            "name": f"{fish_name} {username}",
+            "net_cents": weekly_fish_result.net_cents
+        }
+
     return render_template(
         "dashboard.html",
         sessions=sessions,
         leaderboard=leaderboard,
         biggest_fish=biggest_fish,
+        fish_of_week=fish_of_week,
         leaderboard_period=leaderboard_period,
         leaderboard_game=leaderboard_game,
         total_profit=total_profit,

@@ -1,8 +1,3 @@
-cd ~/poker-ledger
-
-cp README.md README.md.backup
-
-cat > README.md <<'EOF'
 # ♠ Poker Ledger
 
 Poker Ledger is a full-stack web application for tracking poker sessions, analyzing financial performance, and promoting responsible gambling awareness through customizable loss-limit alerts.

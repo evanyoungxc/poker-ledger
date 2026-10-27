@@ -28,3 +28,51 @@ __pycache__/
 .vscode/
 .idea/
 .DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Secrets and environment configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+
+# Databases and runtime data
+instance/
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Local backups
+*.backup
+*.bak
+*.before-*
+*.db.before-*
+*.sql
+*.dump
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+.DS_Store
+Thumbs.db
+
+# Additional backup patterns
+*.backup-*
+*.step*.backup

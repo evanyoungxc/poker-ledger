@@ -64,6 +64,12 @@ def load_user(user_id):
         return None
 
 
+@app.route("/odds")
+@login_required
+def odds():
+    return render_template("odds.html")
+
+
 @app.route("/")
 @login_required
 def dashboard():
@@ -147,6 +153,7 @@ def dashboard():
     leaderboard = db.session.execute(
         leaderboard_query
         .outerjoin(PokerSession, join_condition)
+        .where(User.email != "demo@poker-ledger.invalid")
         .group_by(User.id, User.username)
         .order_by(
             func.coalesce(
@@ -158,6 +165,40 @@ def dashboard():
             User.username.asc()
         )
     ).all()
+
+    # Demo-only leaderboard: display sample account results, not real users.
+    if current_user.email == "demo@poker-ledger.invalid":
+        demo_query = select(
+            User.username,
+            func.count(PokerSession.id).label("sessions"),
+            func.coalesce(
+                func.sum(
+                    PokerSession.cash_out_cents -
+                    PokerSession.buy_in_cents
+                ), 0
+            ).label("profit_cents")
+        )
+
+        demo_join = PokerSession.user_id == User.id
+
+        if leaderboard_game != "all":
+            demo_join = demo_join & (
+                PokerSession.game_type == leaderboard_game
+            )
+
+        if start_date is not None:
+            demo_join = demo_join & (
+                PokerSession.date >= start_date
+            ) & (
+                PokerSession.date <= today
+            )
+
+        leaderboard = db.session.execute(
+            demo_query
+            .outerjoin(PokerSession, demo_join)
+            .where(User.email == "demo@poker-ledger.invalid")
+            .group_by(User.id, User.username)
+        ).all()
 
     # Biggest Fish: largest all-time net loss across all users.
     fish_result = db.session.execute(
@@ -171,6 +212,7 @@ def dashboard():
             ).label("net_cents")
         )
         .join(PokerSession, PokerSession.user_id == User.id)
+        .where(User.email != "demo@poker-ledger.invalid")
         .group_by(User.id, User.username)
         .having(
             func.sum(
@@ -224,7 +266,8 @@ def dashboard():
         .join(PokerSession, PokerSession.user_id == User.id)
         .where(
             PokerSession.date >= fish_week_start,
-            PokerSession.date <= date.today()
+            PokerSession.date <= date.today(),
+            User.email != "demo@poker-ledger.invalid"
         )
         .group_by(User.id, User.username)
         .having(
@@ -253,6 +296,10 @@ def dashboard():
             "name": f"{fish_name} {username}",
             "net_cents": weekly_fish_result.net_cents
         }
+
+    if current_user.email == "demo@poker-ledger.invalid":
+        biggest_fish = None
+        fish_of_week = None
 
     return render_template(
         "dashboard.html",
@@ -339,6 +386,40 @@ def login():
         flash("Invalid email or password.")
 
     return render_template("login.html")
+
+
+
+DEMO_EMAIL = "demo@poker-ledger.invalid"
+
+
+@app.route("/demo", methods=["GET", "POST"])
+@limiter.limit("15 per minute")
+def demo_entry():
+    if request.method == "POST":
+        demo_user = db.session.scalar(
+            select(User).where(User.email == DEMO_EMAIL)
+        )
+        if demo_user is None:
+            abort(503)
+        if demo_user.is_admin:
+            abort(403)
+        logout_user()
+        login_user(demo_user, remember=False, fresh=True)
+        session.permanent = False
+        return redirect(url_for("dashboard"))
+
+    return render_template("demo.html")
+
+
+@app.before_request
+def protect_demo_account():
+    if (
+        current_user.is_authenticated
+        and current_user.email == DEMO_EMAIL
+        and request.method not in ("GET", "HEAD", "OPTIONS")
+        and request.endpoint not in ("logout", "demo_entry")
+    ):
+        abort(403)
 
 
 @app.route("/logout", methods=["POST"])

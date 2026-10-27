@@ -174,6 +174,20 @@ document.addEventListener("DOMContentLoaded", () => {
     drawChart();
 
     window.addEventListener("resize", drawChart);
+
+    // Redraw when the mobile analytics section becomes visible.
+    const chartContainer = canvas.closest(".chart-container");
+
+    if (chartContainer && "ResizeObserver" in window) {
+        const observer = new ResizeObserver(() => {
+            if (chartContainer.clientWidth > 0 &&
+                chartContainer.clientHeight > 0) {
+                drawChart();
+            }
+        });
+
+        observer.observe(chartContainer);
+    }
 });
 
 // Session entry form behavior
@@ -342,3 +356,146 @@ document.addEventListener("DOMContentLoaded", () => {
         window.addEventListener("load", hidePokerLoader, { once: true });
     }
 })();
+
+// Mobile Add Session dropdown
+document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.querySelector(".mobile-add-toggle");
+    const section = document.getElementById("add-session");
+
+    if (!toggle || !section) return;
+
+    function openForm() {
+        toggle.setAttribute("aria-expanded", "true");
+    }
+
+    toggle.addEventListener("click", () => {
+        const expanded = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", String(!expanded));
+    });
+
+    // Open the form when navigating using an Add Session link.
+    document.querySelectorAll('a[href="#add-session"]').forEach(link => {
+        link.addEventListener("click", openForm);
+    });
+
+    if (window.location.hash === "#add-session") {
+        openForm();
+    }
+
+    // Keep validation or server feedback visible.
+    if (section.querySelector(".flash")) {
+        openForm();
+    }
+});
+
+// Leaderboard, History, and Loss Alarm mobile dropdowns
+document.addEventListener("DOMContentLoaded", () => {
+    const sections = ["leaderboard", "session-history", "loss-limit"];
+
+    function openSection(id) {
+        const section = document.getElementById(id);
+        const toggle = section?.querySelector(".mobile-panel-toggle");
+
+        if (toggle) {
+            toggle.setAttribute("aria-expanded", "true");
+        }
+    }
+
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        const toggle = section?.querySelector(".mobile-panel-toggle");
+
+        if (!toggle) return;
+
+        toggle.addEventListener("click", () => {
+            const expanded = toggle.getAttribute("aria-expanded") === "true";
+            toggle.setAttribute("aria-expanded", String(!expanded));
+        });
+
+        document.querySelectorAll(`a[href="#${id}"]`).forEach(link => {
+            link.addEventListener("click", () => openSection(id));
+        });
+    });
+
+    const hash = window.location.hash.slice(1);
+
+    if (sections.includes(hash)) {
+        openSection(hash);
+    }
+
+    // Never hide an active loss-limit warning.
+    if (document.querySelector("#loss-limit .loss-warning")) {
+        openSection("loss-limit");
+    }
+});
+
+
+// ==========================================================
+// Mobile five-page navigation (desktop unaffected)
+// ==========================================================
+document.addEventListener("DOMContentLoaded", () => {
+    const mobileQuery = window.matchMedia("(max-width: 600px)");
+    const body = document.body;
+    const links = document.querySelectorAll(
+        ".mobile-bottom-nav [data-mobile-tab]"
+    );
+
+    const pages = {
+        "dashboard-top": "stats",
+        "mobile-stats": "stats",
+        "add-session": "add",
+        "leaderboard": "leaders",
+        "session-history": "history",
+        "loss-limit": "alarms"
+    };
+
+    function showPage() {
+        if (!mobileQuery.matches) {
+            body.removeAttribute("data-mobile-page");
+            return;
+        }
+
+        const hash = window.location.hash.slice(1);
+        let page = pages[hash] || "stats";
+
+        // Keep feedback visible after submitting a session.
+        if (!hash && document.querySelector("#add-session .flash")) {
+            page = "add";
+        }
+
+        body.setAttribute("data-mobile-page", page);
+
+        links.forEach(link => {
+            const active = link.dataset.mobileTab === page;
+            link.classList.toggle("is-active", active);
+
+            if (active) {
+                link.setAttribute("aria-current", "page");
+            } else {
+                link.removeAttribute("aria-current");
+            }
+        });
+
+        // Display the selected view from the top.
+        window.scrollTo(0, 0);
+
+        // Redraw the chart when the Stats page becomes visible.
+        if (page === "stats") {
+            window.dispatchEvent(new Event("resize"));
+        }
+    }
+
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+            // Also handle taps on the already-selected tab.
+            if (window.location.hash === link.getAttribute("href")) {
+                showPage();
+            }
+        });
+    });
+
+    window.addEventListener("hashchange", showPage);
+    mobileQuery.addEventListener("change", showPage);
+
+    showPage();
+});

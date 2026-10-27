@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard | Poker Ledger</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='splash2') }}">
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='odds1') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='poker-ledger-favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='poker-ledger-favicon-32.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='poker-ledger-apple-touch-icon.png', v='2') }}">
 
     <!-- Poker Ledger PWA -->
-    <link rel="manifest" href="/static/manifest.webmanifest">
+    <link rel="manifest" href="/static/manifest.webmanifest?v=mobile3">
     <meta name="theme-color" content="#0b241a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Poker Ledger">
-    <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 
+
+    <!-- POKER ODDS INTEGRATION V1 -->
 </head>
 <body class="dashboard-page">
 
@@ -39,21 +42,28 @@
     <a href="#loss-limit">⚠ <span>Loss Alarm</span></a>
     <a href="#leaderboard">♛ <span>Leaderboard</span></a>
     <a href="#session-history">▤ <span>Individual Sessions</span></a>
+    <a href="/odds">♠ <span>Charts & Odds</span></a>
 </nav>
 
-{% if current_user.is_authenticated and current_user.is_admin %}
-<div class="admin-nav">
-    <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-button">
-        ♠ Admin Panel
-    </a>
-</div>
-{% endif %}
+
 
 
 <header class="topbar">
-    <div class="logo">♠ <span>POKER LEDGER</span></div>
+    <div class="logo">
+    <img src="{{ url_for('static', filename='poker-ledger-icon.png') }}"
+         alt="" class="brand-logo">
+    <span>POKER LEDGER</span>
+</div>
 
     <div class="user-menu">
+        {% if current_user.is_authenticated and current_user.is_admin %}
+        <div class="admin-nav admin-nav-inline">
+            <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-button">
+                ♠ Admin Panel
+            </a>
+        </div>
+        {% endif %}
+
         <span>Welcome, {{ current_user.username }}</span>
         <form method="POST" action="{{ url_for('logout') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -101,21 +111,18 @@
             <h1>The Poker Table</h1>
             <p>Track every session. Know exactly where you stand.</p>
         </div>
-        <div class="hero-cards" aria-hidden="true">
-            <div class="playing-card card-back">♠</div>
-            <div class="playing-card card-front">
-                <span>A ♥</span>
-                <strong>♥</strong>
-                <span>A ♥</span>
-            </div>
+        <div class="hero-brand-art">
+            <img src="{{ url_for('static', filename='poker-ledger-icon.png') }}"
+                 alt="Black and gold Poker Ledger playing cards">
         </div>
     </section>
 
     {% set wins = sessions | selectattr('profit_cents', 'gt', 0) | list | length %}
     {% set stake = sessions | selectattr('game_type', 'equalto', 'Stake') | list %}
     {% set home = sessions | selectattr('game_type', 'equalto', 'Home Game') | list %}
+    {% set ten_card = sessions | selectattr('game_type', 'equalto', 'Ten Card Flip') | list %}
 
-    <section class="stats-grid">
+    <section class="stats-grid" id="mobile-stats">
 
         <article class="stat-card featured">
             <div class="stat-icon">♠</div>
@@ -183,6 +190,7 @@
 
             {% set stake_total = stake | sum(attribute='profit_cents') %}
             {% set home_total = home | sum(attribute='profit_cents') %}
+            {% set ten_card_total = ten_card | sum(attribute='profit_cents') %}
 
             <div class="breakdown-item">
                 <div class="breakdown-label">
@@ -203,19 +211,38 @@
                     {{ '+' if home_total > 0 else '-' if home_total < 0 else '' }}${{ '%.2f' | format((home_total | abs) / 100) }}
                 </strong>
             </div>
+            <div class="breakdown-item">
+                <div class="breakdown-label">
+                    <span>♠ Ten Card Flip</span>
+                    <span>{{ ten_card | length }} sessions</span>
+                </div>
+                <strong class="{{ 'positive' if ten_card_total >= 0 else 'negative' }}">
+                    {{ '+' if ten_card_total > 0 else '-' if ten_card_total < 0 else '' }}${{ '%.2f' | format((ten_card_total | abs) / 100) }}
+                </strong>
+            </div>
         </article>
 
     </section>
 
 
     <section class="panel session-form-panel" id="add-session">
-        <div class="panel-heading">
-            <div>
-                <h3>♠ Add a Session</h3>
-                <p>Record your latest results at the table</p>
+        <button type="button" class="mobile-add-toggle mobile-panel-toggle"
+                aria-expanded="false" aria-controls="mobile-add-content">
+            <span class="mobile-panel-title">
+                <span class="mobile-panel-icon" aria-hidden="true">＋</span>
+                Add a Session
+            </span>
+            <span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
+        </button>
+
+        <div id="mobile-add-content">
+            <div class="panel-heading">
+                <div>
+                    <h3>♠ Add a Session</h3>
+                    <p>Record your latest results at the table</p>
+                </div>
+                <span class="panel-symbol">♥</span>
             </div>
-            <span class="panel-symbol">♥</span>
-        </div>
 
         {% with messages = get_flashed_messages() %}
             {% for message in messages %}
@@ -277,11 +304,23 @@
                 ♠ SAVE SESSION
             </button>
         </form>
+        </div>
     </section>
 
 
     <!-- All-Time Leaderboard -->
     <section class="panel leaderboard-panel" id="leaderboard">
+        <button type="button" class="mobile-panel-toggle"
+                aria-expanded="false"
+                aria-controls="leaderboard-content">
+            <span class="mobile-panel-title">
+                <span class="mobile-panel-icon" aria-hidden="true">♛</span>
+                Leaderboard
+            </span>
+            <span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="mobile-panel-content" id="leaderboard-content">
+
         <div class="panel-heading">
             <div>
                 <h3>♠ Leaderboard</h3>
@@ -368,9 +407,22 @@
             aria-expanded="false">
         Show All Rankings
     </button>
+
+        </div>
     </section>
 
     <section class="panel history-panel" id="session-history">
+        <button type="button" class="mobile-panel-toggle"
+                aria-expanded="false"
+                aria-controls="session-history-content">
+            <span class="mobile-panel-title">
+                <span class="mobile-panel-icon" aria-hidden="true">▤</span>
+                Session History
+            </span>
+            <span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="mobile-panel-content" id="session-history-content">
+
         <div class="panel-heading">
             <div>
                 <h3>Session History</h3>
@@ -435,11 +487,24 @@
             <div id="session-page-info" class="session-page-info"></div>
             <div id="session-page-buttons" class="session-page-buttons"></div>
         </nav>
-</section>
+
+        </div>
+    </section>
 
 
     <!-- Loss Limit Settings -->
     <section class="panel loss-limit-panel" id="loss-limit">
+        <button type="button" class="mobile-panel-toggle"
+                aria-expanded="false"
+                aria-controls="loss-limit-content">
+            <span class="mobile-panel-title">
+                <span class="mobile-panel-icon" aria-hidden="true">⚠</span>
+                Loss Alarm
+            </span>
+            <span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="mobile-panel-content" id="loss-limit-content">
+
         <div class="panel-heading">
             <div>
                 <h3>♠ Loss Limit Alerts</h3>
@@ -514,6 +579,8 @@
                 ♠ SAVE LOSS LIMIT
             </button>
         </form>
+
+        </div>
     </section>
 
     <footer class="dashboard-footer">
@@ -525,14 +592,17 @@
 <script id="chart-data" type="application/json">
 {{ sessions | reverse | map(attribute='profit_cents') | list | tojson }}
 </script>
-<script src="{{ url_for('static', filename='js/dashboard.js', v='splash2') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js', v='mobiletabs1') }}"></script>
 
 
+<!-- MOBILE FIVE-TAB NAVIGATION -->
 <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
-    <a href="#dashboard-top"><span>⌂</span>Home</a>
-    <a href="#add-session"><span>＋</span>Add</a>
-    <a href="#leaderboard"><span>♛</span>Rankings</a>
-    <a href="#session-history"><span>▤</span>History</a>
+    <a href="#dashboard-top" data-mobile-tab="stats"><span aria-hidden="true">▥</span>Stats</a>
+    <a href="#add-session" data-mobile-tab="add"><span aria-hidden="true">＋</span>Add</a>
+    <a href="#leaderboard" data-mobile-tab="leaders"><span aria-hidden="true">♛</span>Leaders</a>
+    <a href="#session-history" data-mobile-tab="history"><span aria-hidden="true">▤</span>History</a>
+    <a href="#loss-limit" data-mobile-tab="alarms"><span aria-hidden="true">♧</span>Alarms</a>
+    <a href="/odds" data-mobile-tab="odds"><span>♠</span>Odds</a>
 </nav>
 
 </body>

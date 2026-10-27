@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charts & Odds | Poker Ledger</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/odds.css', v='1') }}">
+<link rel="icon" href="{{ url_for('static', filename='poker-ledger-favicon.ico') }}">
+</head>
+<body>
+<header class="odds-header">
+    <a class="odds-brand" href="{{ url_for('dashboard') }}">♠ POKER LEDGER</a>
+    <a class="back-link" href="{{ url_for('dashboard') }}">← Dashboard</a>
+</header>
+
+<main class="odds-container">
+    <div class="odds-hero">
+        <span class="eyebrow">POKER REFERENCE</span>
+        <h1>Charts & Odds</h1>
+        <p>Quick reference tools for smarter decisions at the table.</p>
+    </div>
+
+    <div class="game-switch">
+        <button class="active" data-game="holdem">Texas Hold'em</button>
+        <button data-game="ten">Ten Card Flip</button>
+    </div>
+
+    <div id="holdem-content">
+        <section class="odds-panel">
+            <h2>Preflop Starting Hands</h2>
+            <p class="hint">Simplified illustrative opening ranges for a typical 6-max cash game, approximately 100 big blinds deep. These are not universal or solver-perfect ranges.</p>
+            <label for="position">Your position</label>
+            <select id="position">
+                <option value="UTG">Under the Gun</option>
+                <option value="HJ">Hijack</option>
+                <option value="CO">Cutoff</option>
+                <option value="BTN" selected>Button</option>
+                <option value="SB">Small Blind</option>
+            </select>
+            <div class="range-legend">
+                <span><i class="raise"></i> Open raise</span>
+                <span><i class="fold"></i> Not in simplified opening range</span>
+            </div>
+            <div id="hand-grid" class="hand-grid"></div>
+            <p class="hint">Diagonal = pocket pairs. Above diagonal = suited. Below diagonal = offsuit. Chart assumes action folds to you; it does not cover facing a raise.</p>
+        </section>
+
+        <section class="odds-panel">
+            <h2>Draw Odds Calculator</h2>
+            <p class="hint">For Texas Hold'em on the flop, with 47 unseen cards.</p>
+            <label for="outs">Number of clean outs: <strong id="outs-label">9</strong></label>
+            <input type="range" id="outs" min="1" max="20" value="9">
+            <div class="result-grid">
+                <div class="result-card">
+                    <span>Next card</span>
+                    <strong id="one-card">19.1%</strong>
+                </div>
+                <div class="result-card">
+                    <span>By the river</span>
+                    <strong id="two-cards">35.0%</strong>
+                </div>
+            </div>
+            <p class="hint">The by-river figure assumes two cards remain to be dealt and your outs stay clean.</p>
+        </section>
+
+        <section class="odds-panel">
+            <h2>Pot Odds Calculator</h2>
+            <div class="field-grid">
+                <label>Pot before opponent's bet ($)
+                    <input id="pot" type="number" min="0" step="0.01" value="100">
+                </label>
+                <label>Amount to call ($)
+                    <input id="call" type="number" min="0" step="0.01" value="50">
+                </label>
+                <label>Estimated equity (%)
+                    <input id="equity" type="number" min="0" max="100" step="0.1" value="35">
+                </label>
+            </div>
+            <div class="result-grid">
+                <div class="result-card">
+                    <span>Equity needed</span>
+                    <strong id="required-equity">25.0%</strong>
+                </div>
+                <div class="result-card">
+                    <span>Estimated call EV</span>
+                    <strong id="call-ev">+$20.00</strong>
+                </div>
+            </div>
+            <p class="hint">Assumes the opponent's bet equals the amount to call, no future betting, and no rake.</p>
+        </section>
+
+        <section class="odds-panel">
+            <h2>Hand Rankings</h2>
+            <div class="rankings">
+                <div><b>1</b><span>Royal Flush</span></div>
+                <div><b>2</b><span>Straight Flush</span></div>
+                <div><b>3</b><span>Four of a Kind</span></div>
+                <div><b>4</b><span>Full House</span></div>
+                <div><b>5</b><span>Flush</span></div>
+                <div><b>6</b><span>Straight</span></div>
+                <div><b>7</b><span>Three of a Kind</span></div>
+                <div><b>8</b><span>Two Pair</span></div>
+                <div><b>9</b><span>One Pair</span></div>
+                <div><b>10</b><span>High Card</span></div>
+            </div>
+        </section>
+    </div>
+
+    <div id="ten-content" hidden>
+        <section class="odds-panel">
+            <h2>Ten Card Flip</h2>
+            <p>Ten Card Flip is now part of the Charts & Odds page.</p>
+            <p class="hint">To calculate accurate probabilities, we need the exact rules: how the ten cards are dealt or revealed, what counts as a winning outcome, and whether cards are replaced.</p>
+            <div class="ten-placeholder">♠ ♥ ♣ ♦</div>
+            <p>Once those rules are defined, this section can include a dedicated probability calculator, payout comparisons, and strategy charts.</p>
+        </section>
+    </div>
+</main>
+
+<nav class="odds-bottom-nav" aria-label="Mobile navigation">
+    <a href="{{ url_for('dashboard') }}#dashboard-top"><span>▥</span>Stats</a>
+    <a href="{{ url_for('dashboard') }}#add-session"><span>＋</span>Add</a>
+    <a href="{{ url_for('dashboard') }}#leaderboard"><span>♛</span>Leaders</a>
+    <a href="{{ url_for('dashboard') }}#session-history"><span>▤</span>History</a>
+    <a href="{{ url_for('dashboard') }}#loss-limit"><span>⚠</span>Alarms</a>
+    <a class="active" href="/odds"><span>♠</span>Odds</a>
+</nav>
+<script src="{{ url_for('static', filename='js/odds.js', v='1') }}" defer></script>
+</body>
+</html>

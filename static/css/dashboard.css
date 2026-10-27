@@ -1835,3 +1835,727 @@ html {
         letter-spacing: 1px;
     }
 }
+
+/* Mobile Add Session dropdown */
+.mobile-add-toggle {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .mobile-add-toggle {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 4px;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .mobile-add-chevron {
+        font-size: 22px;
+        transition: transform 0.2s ease;
+    }
+
+    .mobile-add-toggle[aria-expanded="true"] .mobile-add-chevron {
+        transform: rotate(180deg);
+    }
+
+    #mobile-add-content {
+        display: none;
+    }
+
+    .mobile-add-toggle[aria-expanded="true"] + #mobile-add-content {
+        display: block;
+    }
+}
+
+/* Poker Ledger black-and-gold branding */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-logo {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    border-radius: 9px;
+    flex-shrink: 0;
+}
+
+.hero-brand-art {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.hero-brand-art img {
+    display: block;
+    width: clamp(130px, 18vw, 220px);
+    height: auto;
+    border-radius: 22%;
+}
+
+@media (max-width: 600px) {
+    .brand-logo {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+    }
+
+    .hero-brand-art {
+        display: none;
+    }
+}
+
+/* Unified mobile dashboard dropdowns */
+.mobile-panel-toggle {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .mobile-panel-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        min-height: 52px;
+        padding: 12px 4px;
+        margin: 0;
+        border: 0;
+        background: transparent;
+        color: #d8b66a;
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.4;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .mobile-panel-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: #d8b66a;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .mobile-panel-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        flex-shrink: 0;
+        font-size: 18px;
+        color: #d8b66a;
+    }
+
+    .mobile-panel-chevron {
+        color: #d8b66a;
+        font-size: 22px;
+        line-height: 1;
+        transition: transform 0.2s ease;
+    }
+
+    .mobile-panel-toggle[aria-expanded="true"] .mobile-panel-chevron {
+        transform: rotate(180deg);
+    }
+
+    .mobile-panel-content {
+        display: none;
+    }
+
+    .mobile-panel-toggle[aria-expanded="true"] + .mobile-panel-content {
+        display: block;
+    }
+
+    /* Match Add Session to the other dropdowns */
+    .mobile-add-toggle.mobile-panel-toggle {
+        color: #d8b66a;
+        padding: 12px 4px;
+        font-size: 16px;
+        font-weight: 700;
+    }
+}
+
+
+/* ==========================================================
+   POKER LEDGER MOBILE FIVE-TAB NAVIGATION
+   Desktop layout remains unchanged.
+   ========================================================== */
+
+@media screen and (max-width: 600px) {
+
+    /* Only show the selected mobile page. */
+    body.dashboard-page .dashboard-container .stats-grid,
+    body.dashboard-page .dashboard-container #mobile-analytics-content,
+    body.dashboard-page .dashboard-container #add-session,
+    body.dashboard-page .dashboard-container #leaderboard,
+    body.dashboard-page .dashboard-container #session-history,
+    body.dashboard-page .dashboard-container #loss-limit {
+        display: none !important;
+    }
+
+    body.dashboard-page[data-mobile-page="stats"]
+        .dashboard-container .stats-grid {
+        display: grid !important;
+    }
+
+    body.dashboard-page[data-mobile-page="stats"]
+        .dashboard-container #mobile-analytics-content {
+        display: grid !important;
+    }
+
+    body.dashboard-page[data-mobile-page="add"]
+        .dashboard-container #add-session,
+    body.dashboard-page[data-mobile-page="leaders"]
+        .dashboard-container #leaderboard,
+    body.dashboard-page[data-mobile-page="history"]
+        .dashboard-container #session-history,
+    body.dashboard-page[data-mobile-page="alarms"]
+        .dashboard-container #loss-limit {
+        display: block !important;
+    }
+
+    /* Remove all mobile dropdown buttons. */
+    body.dashboard-page .mobile-panel-toggle,
+    body.dashboard-page .mobile-analytics-details {
+        display: none !important;
+    }
+
+    /* Keep the underlying section contents visible. */
+    body.dashboard-page #mobile-add-content,
+    body.dashboard-page .mobile-panel-content {
+        display: block !important;
+    }
+
+    /* Show the full leaderboard on its own page. */
+    body.dashboard-page #leaderboard .leaderboard-table tbody tr {
+        display: table-row !important;
+    }
+
+    body.dashboard-page .mobile-leaderboard-toggle {
+        display: none !important;
+    }
+
+    /* Keep the bottom navigation visible. */
+    body.dashboard-page .mobile-bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        z-index: 1000;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    body.dashboard-page .mobile-bottom-nav a {
+        min-width: 0;
+        text-align: center;
+        text-decoration: none;
+        opacity: 0.65;
+    }
+
+    body.dashboard-page .mobile-bottom-nav a.is-active {
+        color: #d8b56a;
+        opacity: 1;
+        font-weight: 700;
+    }
+
+    body.dashboard-page .dashboard-container {
+        padding-bottom: 110px !important;
+    }
+}
+
+
+/* MOBILE NAVIGATION AND FISH VISIBILITY FIX */
+@media screen and (max-width: 600px) {
+
+    /* Override older four-column navigation rules. */
+    body.dashboard-page .mobile-bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        gap: 2px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    body.dashboard-page .mobile-bottom-nav a {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 6px 0 !important;
+        font-size: 10px !important;
+        white-space: nowrap;
+    }
+
+    body.dashboard-page .mobile-bottom-nav a span {
+        font-size: 21px !important;
+    }
+
+    /* Fish awards belong exclusively to mobile Stats. */
+    body.dashboard-page .biggest-fish-panel {
+        display: none !important;
+    }
+
+    body.dashboard-page[data-mobile-page="stats"] .biggest-fish-panel {
+        display: block !important;
+    }
+}
+
+
+/* ==========================================================
+   POKER LEDGER MOBILE POLISH V1
+   All changes restricted to mobile.
+   ========================================================== */
+@media screen and (max-width: 600px) {
+
+    html,
+    body.dashboard-page {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    body.dashboard-page {
+        font-size: 15px;
+        line-height: 1.5;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /* Center the branding and account controls. */
+    body.dashboard-page .topbar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 12px !important;
+        padding: 18px 14px 16px !important;
+        text-align: center !important;
+    }
+
+    body.dashboard-page .topbar .logo {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        width: 100%;
+        font-size: 21px !important;
+        letter-spacing: 1.3px;
+    }
+
+    body.dashboard-page .topbar .brand-logo {
+        width: 38px !important;
+        height: 38px !important;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    body.dashboard-page .topbar .user-menu {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 12px !important;
+        font-size: 13px !important;
+    }
+
+    body.dashboard-page .topbar .logout-btn {
+        min-height: 36px;
+        padding: 7px 14px !important;
+        border-radius: 9px;
+        font-size: 13px !important;
+        font-weight: 600;
+    }
+
+    /* Consistent content spacing. */
+    body.dashboard-page .dashboard-container {
+        width: 100%;
+        max-width: 100%;
+        padding: 16px 14px 120px !important;
+        box-sizing: border-box;
+    }
+
+    body.dashboard-page .dashboard-container .panel {
+        border-radius: 17px !important;
+        padding: 18px !important;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+    }
+
+    body.dashboard-page .panel-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 22px !important;
+    }
+
+    body.dashboard-page .panel-heading h3 {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: clamp(23px, 6vw, 29px) !important;
+        line-height: 1.2 !important;
+        margin: 0 0 6px !important;
+        letter-spacing: -0.3px;
+    }
+
+    body.dashboard-page .panel-heading p {
+        font-size: 13px !important;
+        line-height: 1.45;
+        margin: 0 !important;
+    }
+
+    body.dashboard-page .panel-symbol {
+        font-size: 21px !important;
+        line-height: 1.3;
+        flex-shrink: 0;
+    }
+
+    /* Form consistency. */
+    body.dashboard-page .session-form label,
+    body.dashboard-page .loss-limit-form label {
+        font-size: 13px !important;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    body.dashboard-page .session-form input,
+    body.dashboard-page .session-form select,
+    body.dashboard-page .session-form textarea {
+        font-size: 16px !important;
+        border-radius: 11px !important;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    body.dashboard-page #session-date {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        overflow: hidden;
+    }
+
+    /* Compact session history cards. */
+    body.dashboard-page #session-history-table tbody tr {
+        border-radius: 14px !important;
+        padding: 13px !important;
+        margin-bottom: 12px !important;
+    }
+
+    body.dashboard-page #session-history-table tbody td {
+        font-size: 13px !important;
+        line-height: 1.4;
+        padding: 10px 0 !important;
+    }
+
+    body.dashboard-page #session-history-table tbody td[data-label]::before {
+        font-size: 12px !important;
+        font-weight: 600;
+    }
+
+    /* Fish awards only on Stats. */
+    body.dashboard-page .biggest-fish-panel {
+        display: none !important;
+    }
+
+    body.dashboard-page[data-mobile-page="stats"] .biggest-fish-panel {
+        display: block !important;
+        margin: 14px !important;
+        border-radius: 17px !important;
+    }
+
+    /* Fixed five-column navigation. */
+    body.dashboard-page nav.mobile-bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+        padding: 9px 5px calc(9px + env(safe-area-inset-bottom)) !important;
+        gap: 0 !important;
+        min-height: 68px !important;
+        z-index: 99999 !important;
+        overflow: hidden !important;
+        background: #0b241a !important;
+        border-top: 1px solid #365443;
+    }
+
+    body.dashboard-page nav.mobile-bottom-nav a {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        padding: 5px 0 !important;
+        margin: 0 !important;
+        gap: 3px !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+        white-space: nowrap;
+        box-sizing: border-box !important;
+    }
+
+    body.dashboard-page nav.mobile-bottom-nav a span {
+        font-size: 22px !important;
+        line-height: 1 !important;
+    }
+
+    body.dashboard-page nav.mobile-bottom-nav a.is-active {
+        color: #e6ca85 !important;
+        opacity: 1 !important;
+    }
+
+    body.dashboard-page nav.mobile-bottom-nav a.is-active span {
+        color: #e6ca85 !important;
+    }
+}
+
+
+/* MOBILE FINISHING TOUCHES V1 */
+@media screen and (max-width: 600px) {
+
+    /* Slightly taller, more comfortable bottom navigation. */
+    body.dashboard-page nav.mobile-bottom-nav {
+        min-height: 84px !important;
+        padding: 12px 6px calc(12px + env(safe-area-inset-bottom)) !important;
+    }
+
+    body.dashboard-page nav.mobile-bottom-nav a {
+        min-height: 58px !important;
+        gap: 6px !important;
+        font-size: 11px !important;
+    }
+
+    body.dashboard-page nav.mobile-bottom-nav a span {
+        font-size: 25px !important;
+    }
+
+    /* Keep content clear of the taller bottom bar. */
+    body.dashboard-page .dashboard-container {
+        padding-bottom: 135px !important;
+    }
+
+    /* Align Fish of the Week and Biggest Fish consistently. */
+    body.dashboard-page .biggest-fish-panel {
+        box-sizing: border-box !important;
+        text-align: center !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel .biggest-fish-title,
+    body.dashboard-page .biggest-fish-panel .biggest-fish-name,
+    body.dashboard-page .biggest-fish-panel .biggest-fish-loss,
+    body.dashboard-page .biggest-fish-panel .biggest-fish-caption,
+    body.dashboard-page .biggest-fish-panel .fish-of-week {
+        text-align: center !important;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    body.dashboard-page .biggest-fish-panel .biggest-fish-title {
+        font-size: 12px !important;
+        line-height: 1.4;
+        letter-spacing: 0.7px;
+    }
+
+    body.dashboard-page .biggest-fish-panel .biggest-fish-name {
+        margin: 6px 0 !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel .biggest-fish-caption {
+        line-height: 1.4;
+    }
+}
+
+
+/* ADMIN HEADER + FISH LAYOUT REPAIR */
+body.dashboard-page .topbar .admin-nav-inline {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+}
+
+body.dashboard-page .topbar .admin-nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 !important;
+    padding: 8px 13px;
+    min-height: 36px;
+    border-radius: 9px;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+@media screen and (max-width: 600px) {
+    body.dashboard-page .topbar .user-menu {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 9px 12px !important;
+    }
+
+    body.dashboard-page .topbar .user-menu > span {
+        flex-basis: 100%;
+        text-align: center;
+    }
+
+    body.dashboard-page .topbar .admin-nav-inline {
+        width: auto !important;
+        flex: 0 0 auto;
+    }
+
+    body.dashboard-page .topbar .admin-nav-button,
+    body.dashboard-page .topbar .logout-btn {
+        min-height: 38px !important;
+        padding: 9px 14px !important;
+        font-size: 12px !important;
+    }
+
+    /* Restore two-column Fish awards with aligned content. */
+    body.dashboard-page[data-mobile-page="stats"] .biggest-fish-panel {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        grid-template-rows: auto auto auto auto !important;
+        column-gap: 0 !important;
+        row-gap: 7px !important;
+        width: calc(100% - 28px) !important;
+        max-width: none !important;
+        margin: 14px !important;
+        padding: 18px 12px !important;
+        box-sizing: border-box !important;
+        align-items: start !important;
+        text-align: center !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel > .biggest-fish-title,
+    body.dashboard-page .biggest-fish-panel > .biggest-fish-name,
+    body.dashboard-page .biggest-fish-panel > .biggest-fish-loss,
+    body.dashboard-page .biggest-fish-panel > .biggest-fish-caption {
+        grid-column: 1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 0 8px !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+        align-self: start !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel > .biggest-fish-title {
+        grid-row: 1 !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel > .biggest-fish-name {
+        grid-row: 2 !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel > .biggest-fish-loss {
+        grid-row: 3 !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel > .biggest-fish-caption {
+        grid-row: 4 !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel > .fish-of-week {
+        grid-column: 2 !important;
+        grid-row: 1 / 5 !important;
+        display: grid !important;
+        grid-template-rows: subgrid !important;
+        align-items: start !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 0 4px 0 12px !important;
+        border-top: 0 !important;
+        border-left: 1px solid #38513e !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel .biggest-fish-title {
+        font-size: 10px !important;
+        font-weight: 800 !important;
+        line-height: 1.4 !important;
+        letter-spacing: 0.25px !important;
+        margin: 0 !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel .biggest-fish-name {
+        font-size: 15px !important;
+        line-height: 1.35 !important;
+        margin: 0 !important;
+        overflow-wrap: anywhere;
+    }
+
+    body.dashboard-page .biggest-fish-panel .biggest-fish-loss {
+        font-size: 20px !important;
+        line-height: 1.3 !important;
+        margin: 0 !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel .biggest-fish-caption {
+        font-size: 10px !important;
+        line-height: 1.4 !important;
+        margin: 0 !important;
+    }
+
+    body.dashboard-page .biggest-fish-panel .fish-of-week > * {
+        width: 100% !important;
+        min-width: 0 !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+    }
+}
+
+
+/* POKER ODDS INTEGRATION V1 */
+@media screen and (max-width: 600px) {
+    body.dashboard-page nav.mobile-bottom-nav {
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        padding-left: 3px !important;
+        padding-right: 3px !important;
+    }
+
+    body.dashboard-page nav.mobile-bottom-nav a {
+        min-width: 0 !important;
+        padding-left: 1px !important;
+        padding-right: 1px !important;
+        font-size: 10px !important;
+    }
+
+    body.dashboard-page nav.mobile-bottom-nav a span {
+        font-size: 22px !important;
+    }
+}

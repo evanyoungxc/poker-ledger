@@ -6,12 +6,20 @@
     <title>Admin | Poker Ledger</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css', v='adminfish1') }}">
 </head>
 <body>
 <main class="admin-wrap">
-    <h1>Poker Ledger — Admin</h1>
-    <p><a href="{{ url_for('dashboard') }}">Back to Dashboard</a></p>
+    <header class="admin-page-header">
+        <div class="admin-page-brand">
+            <div class="admin-page-eyebrow">POKER LEDGER</div>
+            <h1>Admin Dashboard</h1>
+            <p>Manage users and review poker sessions.</p>
+        </div>
+        <a class="admin-back-button" href="{{ url_for('dashboard') }}">
+            ← Back to Dashboard
+        </a>
+    </header>
 
     {% with messages = get_flashed_messages() %}
         {% for message in messages %}
@@ -71,7 +79,7 @@
                     <label>Date <input type="date" name="date" value="{{ s.date }}" required></label>
                     <label>Game Type
                         <select name="game_type">
-                            {% for type in ['Stake', 'Home Game'] %}
+                            {% for type in ['Stake', 'Home Game', 'Ten Card Flip'] %}
                             <option value="{{ type }}" {% if s.game_type == type %}selected{% endif %}>{{ type }}</option>
                             {% endfor %}
                         </select>

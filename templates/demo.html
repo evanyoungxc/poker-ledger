@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Try Demo | Poker Ledger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='poker-ledger-favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='poker-ledger-favicon-32.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='poker-ledger-apple-touch-icon.png', v='2') }}">
+</head>
+<body class="auth-page">
+    <main class="auth-card">
+        <div class="brand">
+            <div class="brand-icon">♠</div>
+            <h1>POKER LEDGER</h1>
+            <p>Take a look around without creating an account.</p>
+        </div>
+
+        <p style="text-align:center; margin:24px 0; line-height:1.6;">
+            Explore the dashboard, poker sessions, statistics, and leaderboards
+            using sample data. The demo is read-only.
+        </p>
+
+        <form method="POST" action="{{ url_for('demo_entry') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="primary-btn">ENTER DEMO ♠</button>
+        </form>
+
+        <p class="auth-footer">
+            <a href="{{ url_for('login') }}">Back to login</a>
+        </p>
+    </main>
+</body>
+</html>

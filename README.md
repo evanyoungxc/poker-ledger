@@ -57,4 +57,3 @@ The project also demonstrates experience building, securing, and maintaining a d
 ## Disclaimer
 
 Poker Ledger is intended for personal financial tracking, educational reference, and gambling awareness. It does not facilitate gambling, guarantee financial outcomes, or replace professional support for gambling-related problems.
-EOF

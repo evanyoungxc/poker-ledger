@@ -16,7 +16,7 @@ Track session history, profits and losses, performance trends, and personal loss
 
 A mobile-friendly interface with streamlined navigation and access to session tracking, statistics, and leaderboards.
 
-![Poker Ledger Mobile Dashboard](docs/mobile-dashboard.png)
+<img src="docs/mobile-dashboard.png" alt="Poker Ledger Mobile Dashboard" width="280">
 
 ### Login Page
 

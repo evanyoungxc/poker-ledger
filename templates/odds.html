@@ -4,12 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Charts & Odds | Poker Ledger</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/odds.css', v='1') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/odds.css', v='unified-ui-1') }}">
 <link rel="icon" href="{{ url_for('static', filename='poker-ledger-favicon.ico') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <header class="odds-header">
-    <a class="odds-brand" href="{{ url_for('dashboard') }}">♠ POKER LEDGER</a>
+    <a class="odds-brand" href="{{ url_for('dashboard') }}"><span class="odds-brand-mark">♠</span><span>POKER LEDGER</span></a>
     <a class="back-link" href="{{ url_for('dashboard') }}">← Dashboard</a>
 </header>
 
@@ -45,63 +48,65 @@
             <p class="hint">Diagonal = pocket pairs. Above diagonal = suited. Below diagonal = offsuit. Chart assumes action folds to you; it does not cover facing a raise.</p>
         </section>
 
-        <section class="odds-panel">
-            <h2>Draw Odds Calculator</h2>
-            <p class="hint">For Texas Hold'em on the flop, with 47 unseen cards.</p>
-            <label for="outs">Number of clean outs: <strong id="outs-label">9</strong></label>
-            <input type="range" id="outs" min="1" max="20" value="9">
-            <div class="result-grid">
-                <div class="result-card">
-                    <span>Next card</span>
-                    <strong id="one-card">19.1%</strong>
-                </div>
-                <div class="result-card">
-                    <span>By the river</span>
-                    <strong id="two-cards">35.0%</strong>
-                </div>
-            </div>
-            <p class="hint">The by-river figure assumes two cards remain to be dealt and your outs stay clean.</p>
-        </section>
 
-        <section class="odds-panel">
-            <h2>Pot Odds Calculator</h2>
-            <div class="field-grid">
-                <label>Pot before opponent's bet ($)
-                    <input id="pot" type="number" min="0" step="0.01" value="100">
+        <section class="odds-panel" id="preflop-equity">
+            <h2>Preflop Hand vs. Hand Calculator</h2>
+            <p class="hint">
+                Compare exact Texas Hold'em hole cards for 2–6 players.
+                Results are estimated by simulating random five-card boards.
+            </p>
+
+            <div class="equity-toolbar">
+                <label for="player-count">
+                    Number of players
+                    <select id="player-count">
+                        <option value="2" selected>2 players</option>
+                        <option value="3">3 players</option>
+                        <option value="4">4 players</option>
+                        <option value="5">5 players</option>
+                        <option value="6">6 players</option>
+                    </select>
                 </label>
-                <label>Amount to call ($)
-                    <input id="call" type="number" min="0" step="0.01" value="50">
-                </label>
-                <label>Estimated equity (%)
-                    <input id="equity" type="number" min="0" max="100" step="0.1" value="35">
+
+                <label for="simulation-count">
+                    Simulations
+                    <select id="simulation-count">
+                        <option value="2000">2,000 — Quick</option>
+                        <option value="10000" selected>10,000 — Standard</option>
+                        <option value="30000">30,000 — Detailed</option>
+                    </select>
                 </label>
             </div>
-            <div class="result-grid">
-                <div class="result-card">
-                    <span>Equity needed</span>
-                    <strong id="required-equity">25.0%</strong>
-                </div>
-                <div class="result-card">
-                    <span>Estimated call EV</span>
-                    <strong id="call-ev">+$20.00</strong>
-                </div>
-            </div>
-            <p class="hint">Assumes the opponent's bet equals the amount to call, no future betting, and no rake.</p>
+
+            <div id="equity-players" class="equity-players"></div>
+
+            <button type="button" id="calculate-equity" class="equity-calculate">
+                Calculate Preflop Equity
+            </button>
+
+            <p id="equity-status" class="hint" role="status" aria-live="polite"></p>
+
+            <div id="equity-results" class="equity-results" hidden></div>
+
+            <p class="hint">
+                Equity includes each player's share of split pots.
+                These are simulated estimates, not exact enumerated odds.
+            </p>
         </section>
 
         <section class="odds-panel">
             <h2>Hand Rankings</h2>
             <div class="rankings">
-                <div><b>1</b><span>Royal Flush</span></div>
-                <div><b>2</b><span>Straight Flush</span></div>
-                <div><b>3</b><span>Four of a Kind</span></div>
-                <div><b>4</b><span>Full House</span></div>
-                <div><b>5</b><span>Flush</span></div>
-                <div><b>6</b><span>Straight</span></div>
-                <div><b>7</b><span>Three of a Kind</span></div>
-                <div><b>8</b><span>Two Pair</span></div>
-                <div><b>9</b><span>One Pair</span></div>
-                <div><b>10</b><span>High Card</span></div>
+                <div><b>1</b><span><strong>Royal Flush</strong><small>A♠ K♠ Q♠ J♠ 10♠</small></span></div>
+                <div><b>2</b><span><strong>Straight Flush</strong><small>9♥ 8♥ 7♥ 6♥ 5♥</small></span></div>
+                <div><b>3</b><span><strong>Four of a Kind</strong><small>K♠ K♥ K♦ K♣ 3♠</small></span></div>
+                <div><b>4</b><span><strong>Full House</strong><small>Q♠ Q♥ Q♦ 8♣ 8♥</small></span></div>
+                <div><b>5</b><span><strong>Flush</strong><small>A♦ J♦ 8♦ 5♦ 2♦</small></span></div>
+                <div><b>6</b><span><strong>Straight</strong><small>10♠ 9♥ 8♦ 7♣ 6♠</small></span></div>
+                <div><b>7</b><span><strong>Three of a Kind</strong><small>7♠ 7♥ 7♦ K♣ 2♠</small></span></div>
+                <div><b>8</b><span><strong>Two Pair</strong><small>A♠ A♥ 9♦ 9♣ 4♠</small></span></div>
+                <div><b>9</b><span><strong>One Pair</strong><small>J♠ J♥ A♦ 8♣ 3♠</small></span></div>
+                <div><b>10</b><span><strong>High Card</strong><small>A♠ J♥ 9♦ 6♣ 3♠</small></span></div>
             </div>
         </section>
     </div>
@@ -117,14 +122,93 @@
     </div>
 </main>
 
+
+
+
+<div class="restored-more-menu" id="odds-more-menu" hidden>
+    <a href="{{ url_for('dashboard') }}#session-history">Session History</a>
+    <a href="{{ url_for('odds') }}">Charts &amp; Odds</a>
+    {% if current_user.is_admin %}
+    <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+    {% endif %}
+</div>
+
 <nav class="odds-bottom-nav" aria-label="Mobile navigation">
-    <a href="{{ url_for('dashboard') }}#dashboard-top"><span>▥</span>Stats</a>
-    <a href="{{ url_for('dashboard') }}#add-session"><span>＋</span>Add</a>
-    <a href="{{ url_for('dashboard') }}#leaderboard"><span>♛</span>Leaders</a>
-    <a href="{{ url_for('dashboard') }}#session-history"><span>▤</span>History</a>
-    <a href="{{ url_for('dashboard') }}#loss-limit"><span>⚠</span>Alarms</a>
-    <a class="active" href="/odds"><span>♠</span>Odds</a>
+
+    <a href="{{ url_for('dashboard') }}#dashboard-top">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+        <span>Home</span>
+    </a>
+    <a href="{{ url_for('dashboard') }}#add-session">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+        <span>Add</span>
+    </a>
+    <a href="{{ url_for('dashboard') }}#leaderboard">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4zM7 6H4v3a4 4 0 0 0 4 4M17 6h3v3a4 4 0 0 1-4 4"/></svg>
+        <span>Leaders</span>
+    </a>
+    <a href="{{ url_for('dashboard') }}#loss-limit">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+        <span>Alarms</span>
+    </a>
+
+    <button type="button" id="odds-more-button"
+            aria-expanded="false" aria-controls="odds-more-menu">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+        <span>More</span>
+    </button>
 </nav>
-<script src="{{ url_for('static', filename='js/odds.js', v='1') }}" defer></script>
+
+
+<script src="{{ url_for('static', filename='js/odds.js', v='equity1') }}" defer></script>
+
+<script>
+/* restored-more-handler:odds-more-button */
+(() => {
+    const button = document.getElementById("odds-more-button");
+    const menu = document.getElementById("odds-more-menu");
+    if (!button || !menu) return;
+
+    const close = () => {
+        menu.hidden = true;
+        button.setAttribute("aria-expanded", "false");
+    };
+
+    button.addEventListener("click", () => {
+        const opening = menu.hidden;
+        menu.hidden = !opening;
+        button.setAttribute("aria-expanded", String(opening));
+    });
+
+    document.addEventListener("click", event => {
+        if (!menu.contains(event.target) && !button.contains(event.target))
+            close();
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") close();
+    });
+
+    menu.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+})();
+</script>
+
 </body>
 </html>

@@ -114,43 +114,545 @@ input[type="range"] { padding: 0; accent-color: var(--gold); }
 }
 .rankings b { color: var(--gold); width: 22px; }
 .ten-placeholder { font-size: 42px; text-align: center; letter-spacing: 16px; padding: 25px 0; color: var(--gold); }
-.odds-bottom-nav { display: none; }
+
+
+
+/* Preflop equity calculator */
+.equity-toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.equity-players {
+    display: grid;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.equity-player {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 13px 15px;
+    background: #0d2016;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.equity-player > strong {
+    min-width: 80px;
+    color: #e8cb7d;
+}
+
+.equity-card-pair {
+    display: flex;
+    gap: 10px;
+    width: min(100%, 380px);
+}
+
+.equity-card-pair select {
+    margin: 0;
+    min-width: 0;
+}
+
+.equity-calculate {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--gold);
+    color: #122017;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.equity-calculate:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.equity-results {
+    margin: 22px 0;
+}
+
+.equity-results h3 {
+    color: #f0d38e;
+}
+
+.equity-result {
+    padding: 14px;
+    margin: 10px 0;
+    background: #0d2016;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.equity-result-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.equity-bar {
+    height: 10px;
+    overflow: hidden;
+    margin: 12px 0;
+    border-radius: 10px;
+    background: #293b31;
+}
+
+.equity-bar > div {
+    height: 100%;
+    border-radius: inherit;
+    background: #d8b76c;
+}
+
+.equity-result small {
+    color: var(--muted);
+}
+
+.rankings > div span {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.rankings > div small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
 @media (max-width: 600px) {
-    .odds-header { padding: 17px 14px; }
-    .odds-brand { font-size: 16px; }
-    .back-link { font-size: 12px; padding: 9px; }
-    .odds-container { padding: 22px 12px 140px; }
-    .odds-panel { padding: 16px 12px; margin: 14px 0; }
-    .game-switch button { flex: 1; padding: 12px 7px; font-size: 12px; }
-    .field-grid { grid-template-columns: 1fr; gap: 0; }
-    .result-card { padding: 14px 7px; }
-    .result-card strong { font-size: 21px; }
-    .hand-grid { gap: 2px; }
-    .hand-cell { font-size: 9px; border-radius: 2px; }
-    .rankings { grid-template-columns: 1fr; }
+    .equity-toolbar {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .equity-player {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .equity-card-pair {
+        width: 100%;
+    }
+}
+
+/* Shared Poker Ledger visual language */
+:root {
+    --bg: #091a12;
+    --panel: #14291d;
+    --border: #34503c;
+    --gold: #d8b76c;
+    --gold-light: #f0d38e;
+    --text: #e8eee7;
+    --muted: #a7b6aa;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.odds-header {
+    min-height: 78px;
+    max-width: none;
+    padding: 18px max(5%, calc((100% - 1200px) / 2));
+    background: rgba(7, 24, 17, 0.9);
+    border-bottom: 1px solid var(--border);
+}
+
+.odds-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: var(--gold);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.odds-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: #153c29;
+    font-family: Georgia, serif;
+    font-size: 25px;
+}
+
+.back-link {
+    flex-shrink: 0;
+    padding: 9px 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.odds-container {
+    max-width: 1200px;
+    padding: 35px 24px 110px;
+}
+
+.odds-hero {
+    margin-bottom: 25px;
+    padding: 32px 42px;
+    text-align: left;
+    background: linear-gradient(120deg, #153c29, #0b241a);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+}
+
+.odds-hero h1 {
+    margin: 12px 0;
+    color: var(--gold-light);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(30px, 5vw, 46px);
+    line-height: 1.2;
+}
+
+.odds-hero p {
+    margin: 0;
+}
+
+.odds-panel {
+    padding: 26px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: linear-gradient(145deg, #172e22, #102319);
+}
+
+.odds-panel h2 {
+    color: var(--gold-light);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    line-height: 1.3;
+}
+
+.game-switch button,
+.equity-calculate,
+.back-link,
+select,
+input {
+    font-family: inherit;
+}
+
+.odds-bottom-nav,
+.odds-more-menu {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .odds-header {
+        min-height: 60px;
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .odds-brand {
+        gap: 8px;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+    }
+
+    .odds-brand-mark {
+        width: 30px;
+        height: 30px;
+        flex-basis: 30px;
+        font-size: 20px;
+    }
+
+    .back-link {
+        padding: 9px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .odds-container {
+        padding: 12px 14px calc(110px + env(safe-area-inset-bottom));
+    }
+
+    .odds-hero {
+        padding: 20px 18px;
+        margin-bottom: 14px;
+        border-radius: 14px;
+    }
+
+    .odds-hero h1 {
+        font-size: 29px;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+
+    .odds-panel {
+        padding: 16px;
+        margin: 14px 0;
+        border-radius: 14px;
+        min-width: 0;
+    }
+
+    .odds-panel h2 {
+        font-size: 19px;
+        line-height: 1.3;
+    }
+
+    .game-switch {
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .game-switch button {
+        flex: 1;
+        min-width: 0;
+        padding: 12px 7px;
+        font-size: 12px;
+    }
+
+    .field-grid,
+    .equity-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .rankings {
+        grid-template-columns: 1fr;
+    }
+
+    .hand-grid {
+        gap: 2px;
+    }
+
+    .hand-cell {
+        font-size: 9px;
+    }
+
     .odds-bottom-nav {
         display: grid;
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
         z-index: 9999;
+        gap: 0;
+        padding: 6px 5px calc(6px + env(safe-area-inset-bottom));
         background: #0b1d14;
         border-top: 1px solid #38513e;
-        padding: 10px 3px calc(10px + env(safe-area-inset-bottom));
     }
-    .odds-bottom-nav a {
+
+    .odds-bottom-nav > a,
+    .odds-bottom-nav > button {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 5px;
+        gap: 4px;
+        width: 100%;
         min-width: 0;
-        color: #a7b6aa;
-        font-size: 10px;
+        min-height: 54px;
+        padding: 5px 1px;
+        margin: 0;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: #e8e9df;
+        font: inherit;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.2;
         text-align: center;
+        text-decoration: none;
+        cursor: pointer;
     }
-    .odds-bottom-nav a span { font-size: 22px; }
-    .odds-bottom-nav a.active { color: var(--gold); }
+
+    .odds-bottom-nav svg {
+        display: block;
+        width: 22px;
+        height: 22px;
+        flex: 0 0 22px;
+        color: var(--gold);
+    }
+
+    .odds-bottom-nav span {
+        display: block;
+        font-size: 11px;
+        line-height: 14px;
+        letter-spacing: 0;
+        white-space: nowrap;
+    }
+
+    .odds-bottom-nav .is-active,
+    .odds-bottom-nav a:active,
+    .odds-bottom-nav button:active {
+        color: var(--gold-light);
+        background: rgba(216, 183, 108, 0.10);
+    }
+
+    .odds-more-menu:not([hidden]) {
+        display: flex;
+        position: fixed;
+        bottom: calc(77px + env(safe-area-inset-bottom));
+        right: 10px;
+        z-index: 10000;
+        width: min(280px, calc(100vw - 20px));
+        flex-direction: column;
+        padding: 8px;
+        border: 1px solid #38513e;
+        border-radius: 14px;
+        background: #10281d;
+        box-shadow: 0 12px 32px rgba(0,0,0,.45);
+    }
+
+    .odds-more-menu[hidden] {
+        display: none;
+    }
+
+    .odds-more-menu a {
+        display: block;
+        padding: 14px 12px;
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .odds-more-menu a[aria-current="page"] {
+        color: var(--gold-light);
+        background: rgba(216,183,108,.10);
+    }
+}
+
+
+/* Poker Ledger — matching four-tab navigation on Odds page */
+@media (max-width: 900px) {
+    nav.odds-bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        align-items: center !important;
+    }
+
+    nav.odds-bottom-nav > a {
+        color: #d5ddd5 !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+        opacity: 1 !important;
+    }
+
+    nav.odds-bottom-nav > a span,
+    nav.odds-bottom-nav > a svg {
+        color: inherit !important;
+        stroke: currentColor;
+    }
+
+    nav.odds-bottom-nav > a.is-active {
+        color: #e8c77e !important;
+    }
+}
+
+
+/* Four-tab navigation repair */
+@media (max-width: 900px) {
+    nav.odds-bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        align-items: center !important;
+    }
+
+    nav.odds-bottom-nav > a {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        color: #d5ddd5 !important;
+        opacity: 1 !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+    }
+
+    nav.odds-bottom-nav > a span,
+    nav.odds-bottom-nav > a svg {
+        color: inherit !important;
+    }
+
+    nav.odds-bottom-nav > a.is-active {
+        color: #e8c77e !important;
+    }
+}
+
+
+/* Restored five-button navigation */
+@media (max-width: 900px) {
+    nav.odds-bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    }
+
+    nav.odds-bottom-nav > button {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        color: #d5ddd5 !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        opacity: 1 !important;
+        padding: 0 !important;
+        gap: 4px !important;
+        cursor: pointer;
+    }
+
+    nav.odds-bottom-nav > button span,
+    nav.odds-bottom-nav > button svg {
+        color: inherit !important;
+        stroke: currentColor;
+    }
+}
+
+.restored-more-menu {
+    position: fixed;
+    bottom: calc(85px + env(safe-area-inset-bottom, 0px));
+    right: 12px;
+    z-index: 99999;
+    min-width: 190px;
+    padding: 8px;
+    border: 1px solid #465849;
+    border-radius: 12px;
+    background: #17251c;
+    box-shadow: 0 10px 30px #0008;
+}
+
+.restored-more-menu[hidden] {
+    display: none !important;
+}
+
+.restored-more-menu a {
+    display: block;
+    padding: 12px;
+    color: #d5ddd5;
+    text-decoration: none;
+    border-radius: 7px;
+}
+
+.restored-more-menu a:hover {
+    background: #2b4030;
+    color: #e8c77e;
 }

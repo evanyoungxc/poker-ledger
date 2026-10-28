@@ -22,3 +22,6 @@ typing_extensions==4.16.0
 Werkzeug==3.1.9
 wrapt==2.5.1
 WTForms==3.3.1
+
+pyotp>=2.9,<3
+qrcode[pil]>=8,<9

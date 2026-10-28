@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard | Poker Ledger</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='odds1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css', v='five-tabs-2') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='poker-ledger-favicon.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='poker-ledger-favicon-32.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='poker-ledger-apple-touch-icon.png', v='2') }}">
@@ -57,14 +57,23 @@
 
     <div class="user-menu">
         {% if current_user.is_authenticated and current_user.is_admin %}
-        <div class="admin-nav admin-nav-inline">
-            <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-button">
-                ♠ Admin Panel
-            </a>
-        </div>
+        <a href="{{ url_for('admin_dashboard') }}"
+           class="desktop-admin-button">
+            ♠ Admin Panel
+        </a>
         {% endif %}
 
+
+
         <span>Welcome, {{ current_user.username }}</span>
+        {% if current_user.email != "demo@poker-ledger.invalid" %}
+        <a href="{{ url_for('two_factor_setup') }}"
+           class="account-security-link"
+           aria-label="Account Security and Two-Factor Authentication">
+            <span aria-hidden="true">♢</span>
+            Account Security
+        </a>
+        {% endif %}
         <form method="POST" action="{{ url_for('logout') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="logout-btn">Logout</button>
@@ -596,14 +605,93 @@
 
 
 <!-- MOBILE FIVE-TAB NAVIGATION -->
+
+
+
+<div class="restored-more-menu" id="mobile-more-menu" hidden>
+    <a href="#session-history">Session History</a>
+    <a href="{{ url_for('odds') }}">Charts &amp; Odds</a>
+    {% if current_user.is_admin %}
+    <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+    {% endif %}
+</div>
+
 <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
-    <a href="#dashboard-top" data-mobile-tab="stats"><span aria-hidden="true">▥</span>Stats</a>
-    <a href="#add-session" data-mobile-tab="add"><span aria-hidden="true">＋</span>Add</a>
-    <a href="#leaderboard" data-mobile-tab="leaders"><span aria-hidden="true">♛</span>Leaders</a>
-    <a href="#session-history" data-mobile-tab="history"><span aria-hidden="true">▤</span>History</a>
-    <a href="#loss-limit" data-mobile-tab="alarms"><span aria-hidden="true">♧</span>Alarms</a>
-    <a href="/odds" data-mobile-tab="odds"><span>♠</span>Odds</a>
+
+    <a href="#dashboard-top" data-mobile-tab="home">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+        <span>Home</span>
+    </a>
+    <a href="#add-session" data-mobile-tab="add">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+        <span>Add</span>
+    </a>
+    <a href="#leaderboard" data-mobile-tab="leaders">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4zM7 6H4v3a4 4 0 0 0 4 4M17 6h3v3a4 4 0 0 1-4 4"/></svg>
+        <span>Leaders</span>
+    </a>
+    <a href="#loss-limit" data-mobile-tab="alarms">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+        <span>Alarms</span>
+    </a>
+
+    <button type="button" id="mobile-more-button"
+            aria-expanded="false" aria-controls="mobile-more-menu">
+        <svg viewBox="0 0 24 24" width="23" height="23"
+             fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+        <span>More</span>
+    </button>
 </nav>
+
+
+
+
+<script>
+/* restored-more-handler:mobile-more-button */
+(() => {
+    const button = document.getElementById("mobile-more-button");
+    const menu = document.getElementById("mobile-more-menu");
+    if (!button || !menu) return;
+
+    const close = () => {
+        menu.hidden = true;
+        button.setAttribute("aria-expanded", "false");
+    };
+
+    button.addEventListener("click", () => {
+        const opening = menu.hidden;
+        menu.hidden = !opening;
+        button.setAttribute("aria-expanded", String(opening));
+    });
+
+    document.addEventListener("click", event => {
+        if (!menu.contains(event.target) && !button.contains(event.target))
+            close();
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") close();
+    });
+
+    menu.querySelectorAll("a").forEach(a => a.addEventListener("click", close));
+})();
+</script>
 
 </body>
 </html>

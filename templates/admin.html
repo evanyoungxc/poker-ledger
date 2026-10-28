@@ -6,9 +6,23 @@
     <title>Admin | Poker Ledger</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css', v='adminfish1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css', v='unified-ui-1') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="admin-unified">
+
+<header class="admin-app-topbar">
+    <a class="admin-app-logo" href="{{ url_for('dashboard') }}">
+        <span class="admin-app-logo-mark">♠</span>
+        <span>POKER LEDGER</span>
+    </a>
+    <a class="admin-app-back" href="{{ url_for('dashboard') }}">
+        ← Dashboard
+    </a>
+</header>
+
 <main class="admin-wrap">
     <header class="admin-page-header">
         <div class="admin-page-brand">
@@ -16,9 +30,6 @@
             <h1>Admin Dashboard</h1>
             <p>Manage users and review poker sessions.</p>
         </div>
-        <a class="admin-back-button" href="{{ url_for('dashboard') }}">
-            ← Back to Dashboard
-        </a>
     </header>
 
     {% with messages = get_flashed_messages() %}

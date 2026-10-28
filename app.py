@@ -29,6 +29,10 @@ app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_SAMESITE="Lax",
     PERMANENT_SESSION_LIFETIME=timedelta(days=7),
+    REMEMBER_COOKIE_DURATION=timedelta(days=30),
+    REMEMBER_COOKIE_SECURE=True,
+    REMEMBER_COOKIE_HTTPONLY=True,
+    REMEMBER_COOKIE_SAMESITE="Lax",
     MAX_CONTENT_LENGTH=1024 * 1024,
 )
 
@@ -63,6 +67,11 @@ def load_user(user_id):
     except (ValueError, TypeError):
         return None
 
+
+# POKER_2FA_INTEGRATION_V1
+from poker_two_factor import register_2fa, begin_login, complete_login
+
+register_2fa(app, db, User, limiter)
 
 @app.route("/odds")
 @login_required
@@ -367,6 +376,8 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 @limiter.limit("10 per minute")
 def login():
+    if request.method == "GET" and session.get("pending_2fa_user"):
+        session.clear()
     if current_user.is_authenticated:
         return redirect(url_for("dashboard"))
 
@@ -379,8 +390,17 @@ def login():
         )
 
         if user and user.check_password(password):
+            remember = request.form.get("remember") == "on"
+            if user.totp_enabled:
+                begin_login(user, remember)
+                return redirect(url_for("verify_two_factor"))
+
+            # Admins enroll before being granted normal application access.
+            session.clear()
             login_user(user, remember=False, fresh=True)
             session.permanent = True
+            if user.is_admin:
+                return redirect(url_for("two_factor_setup"))
             return redirect(url_for("dashboard"))
 
         flash("Invalid email or password.")
@@ -426,7 +446,22 @@ def protect_demo_account():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("login"))
+    session.clear()
+
+    response = redirect(url_for("login"))
+
+    # Explicitly expire the Flask-Login remember cookie.
+    response.delete_cookie(
+        app.config.get("REMEMBER_COOKIE_NAME", "remember_token"),
+        path=app.config.get("REMEMBER_COOKIE_PATH", "/"),
+        domain=app.config.get("REMEMBER_COOKIE_DOMAIN"),
+        secure=app.config.get("REMEMBER_COOKIE_SECURE", True),
+        httponly=app.config.get("REMEMBER_COOKIE_HTTPONLY", True),
+        samesite=app.config.get("REMEMBER_COOKIE_SAMESITE", "Lax")
+    )
+
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 @app.route("/health")

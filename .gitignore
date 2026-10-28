@@ -76,3 +76,24 @@ Thumbs.db
 # Additional backup patterns
 *.backup-*
 *.step*.backup
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+instance/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Backups
+backups/
+*.before-*
+*.bak
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc

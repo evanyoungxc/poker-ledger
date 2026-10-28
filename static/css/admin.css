@@ -356,3 +356,101 @@ body {
         font-size: 12px;
     }
 }
+
+/* Poker Ledger unified admin header */
+body.admin-unified {
+    background: #091a12;
+    color: #e8eee7;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.admin-unified .admin-app-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 78px;
+    padding: 18px max(5%, calc((100% - 1200px) / 2));
+    background: rgba(7, 24, 17, 0.9);
+    border-bottom: 1px solid #34503c;
+}
+
+.admin-unified .admin-app-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: #d8b76c;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+.admin-unified .admin-app-logo-mark {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border: 1px solid #34503c;
+    border-radius: 9px;
+    background: #153c29;
+    font-family: Georgia, serif;
+    font-size: 25px;
+}
+
+.admin-unified .admin-app-back {
+    padding: 9px 15px;
+    border: 1px solid #34503c;
+    border-radius: 8px;
+    color: #d8b76c;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.admin-unified .admin-page-header h1,
+.admin-unified .admin-panel h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: #f0d38e;
+    line-height: 1.25;
+}
+
+.admin-unified .admin-page-header h1 {
+    font-size: clamp(30px, 5vw, 46px);
+}
+
+@media (max-width: 600px) {
+    .admin-unified .admin-app-topbar {
+        min-height: 60px;
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .admin-unified .admin-app-logo {
+        gap: 8px;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+    }
+
+    .admin-unified .admin-app-logo-mark {
+        width: 30px;
+        height: 30px;
+        flex-basis: 30px;
+        font-size: 20px;
+    }
+
+    .admin-unified .admin-app-back {
+        padding: 9px;
+        font-size: 11px;
+    }
+
+    .admin-unified .admin-page-header h1 {
+        font-size: 29px;
+        overflow-wrap: anywhere;
+    }
+}
